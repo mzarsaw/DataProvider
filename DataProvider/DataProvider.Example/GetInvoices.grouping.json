@@ -1,0 +1,28 @@
+{
+    "QueryName": "GetInvoices",
+    "GroupingStrategy": "ParentChild",
+    "ParentEntity": {
+        "Name": "Invoice",
+        "KeyColumns": ["Id"],
+        "Columns": [
+            "Id",
+            "InvoiceNumber",
+            "InvoiceDate",
+            "CustomerName",
+            "TotalAmount"
+        ]
+    },
+    "ChildEntity": {
+        "Name": "InvoiceLine",
+        "KeyColumns": ["LineId"],
+        "ParentKeyColumns": ["InvoiceId"],
+        "Columns": [
+            "LineId",
+            "InvoiceId",
+            "Description",
+            "Quantity",
+            "UnitPrice",
+            "Amount"
+        ]
+    }
+}

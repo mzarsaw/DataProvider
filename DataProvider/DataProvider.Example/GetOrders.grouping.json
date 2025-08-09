@@ -1,0 +1,29 @@
+{
+    "QueryName": "GetOrders",
+    "GroupingStrategy": "ParentChild",
+    "ParentEntity": {
+        "Name": "Order",
+        "KeyColumns": ["Id"],
+        "Columns": [
+            "Id",
+            "OrderNumber",
+            "OrderDate",
+            "CustomerId",
+            "TotalAmount",
+            "Status"
+        ]
+    },
+    "ChildEntity": {
+        "Name": "OrderItem",
+        "KeyColumns": ["ItemId"],
+        "ParentKeyColumns": ["OrderId"],
+        "Columns": [
+            "ItemId",
+            "OrderId",
+            "ProductName",
+            "Quantity",
+            "Price",
+            "Subtotal"
+        ]
+    }
+}

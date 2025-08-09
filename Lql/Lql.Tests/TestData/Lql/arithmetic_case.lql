@@ -1,0 +1,22 @@
+orders
+|> select(
+    orders.id,
+    orders.total_amount,
+    orders.discount_percent,
+    case
+        when orders.total_amount > 1000 then orders.total_amount * 0.95
+        when orders.total_amount > 500 then orders.total_amount * 0.97
+        else orders.total_amount
+    end as discounted_amount,
+    case
+        when orders.discount_percent > 0 then (orders.total_amount * (1 - orders.discount_percent / 100))
+        else orders.total_amount
+    end as final_amount
+)
+|> filter(fn(row) => 
+    case
+        when row.orders.total_amount > 2000 then row.orders.discount_percent >= 10
+        when row.orders.total_amount > 1000 then row.orders.discount_percent >= 5
+        else row.orders.discount_percent >= 0
+    end
+) 

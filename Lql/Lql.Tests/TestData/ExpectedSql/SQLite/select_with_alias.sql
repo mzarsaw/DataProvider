@@ -1,0 +1,1 @@
+SELECT users.id, users.name AS user_name, users.email AS contact_email FROM users

@@ -1,0 +1,13 @@
+SELECT 
+    products.id,
+    products.name,
+    products.price,
+    products.quantity,
+    products.price * products.quantity AS total_value,
+    products.price + 10 AS price_plus_ten,
+    products.price - 5 AS price_minus_five,
+    products.price / 2 AS half_price,
+    products.quantity % 10 AS quantity_mod_ten,
+    (products.price * products.quantity) + products.shipping_cost AS final_cost
+FROM products
+WHERE products.price > 0 AND products.quantity > 0

@@ -1,0 +1,11 @@
+orders
+|> group_by(orders.user_id, orders.status)
+|> select(
+    orders.user_id,
+    orders.status,
+    count(*) as order_count,
+    sum(orders.total) as total_amount,
+    avg(orders.total) as avg_amount
+)
+|> having(fn(group) => count(*) > 2)
+|> order_by(total_amount desc) 

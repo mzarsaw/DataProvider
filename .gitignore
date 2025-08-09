@@ -1,0 +1,12 @@
+bin/
+obj/
+.DS_Store
+
+invoices.db
+
+
+.idea
+*.vsix
+
+
+*.generated.sql

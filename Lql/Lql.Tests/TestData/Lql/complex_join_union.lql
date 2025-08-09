@@ -1,0 +1,17 @@
+-- Join users + orders, filter only completed orders
+let joined =
+    users
+    |> join(orders, on = users.id = orders.user_id)
+    |> filter(fn(row) => row.orders.status = 'completed')
+
+-- Union with archived users
+let all_users =
+    joined
+    |> select(users.id, users.name)
+    |> union(
+        archived_users
+        |> select(archived_users.id, archived_users.name)
+    )
+
+-- Insert result into report table
+all_users |> insert(report_table) 

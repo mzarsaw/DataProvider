@@ -1,0 +1,5 @@
+{
+    "csharp.maxProjectFileCountForDiagnosticAnalysis": 10000,
+    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+    "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution"
+}

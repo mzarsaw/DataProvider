@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="../Lql/Lql.csproj" />
+    <ProjectReference Include="../Lql.SqlServer/Lql.SqlServer.csproj" />
+    <ProjectReference Include="../Lql.Postgres/Lql.Postgres.csproj" />
+    <ProjectReference Include="../../Other/Results/Results.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,1 @@
+users |> order_by(users.name asc) |> limit(10) |> select(users.id, users.name)

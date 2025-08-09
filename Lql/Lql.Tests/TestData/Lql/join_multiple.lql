@@ -1,0 +1,4 @@
+users 
+|> join(orders, on = users.id = orders.user_id) 
+|> join(products, on = orders.product_id = products.id) 
+|> select(users.name, orders.total, products.name)

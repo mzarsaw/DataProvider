@@ -1,0 +1,14 @@
+financial_data
+|> select(
+    financial_data.id,
+    financial_data.revenue,
+    financial_data.expenses,
+    financial_data.tax_rate,
+    (financial_data.revenue - financial_data.expenses) * (1 - financial_data.tax_rate) as net_profit,
+    ((financial_data.revenue * 0.1) + (financial_data.expenses * 0.05)) / 12 as monthly_overhead,
+    financial_data.revenue / (financial_data.expenses + 1) as efficiency_ratio
+)
+|> filter(fn(row) => 
+    (row.financial_data.revenue > 1000 and row.financial_data.expenses < 500) or
+    (row.financial_data.revenue > 2000 and row.financial_data.tax_rate < 0.3)
+) 

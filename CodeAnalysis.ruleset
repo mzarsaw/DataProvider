@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="DataProvider Rules" Description="Comprehensive code analysis rules for DataProvider projects" ToolsVersion="17.0">
+    <IncludeAll Action="Error" />
+    <!-- IDE Analyzers = IDE0042 etc-->
+    <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.CodeStyle" RuleNamespace="Microsoft.CodeAnalysis.CSharp.CodeStyle">
+        <!-- Remove unused parameter -->
+        <Rule Id="IDE0290" Action="None" />
+        <Rule Id="CA1031" Action="None" />
+        <Rule Id="CA1062" Action="None" />
+        <Rule Id="CA1016" Action="None" />
+        <Rule Id="CA1303" Action="None" />
+        <Rule Id="EPS06" Action="None" />
+        <Rule Id="CA1002" Action="None" />
+        <Rule Id="CA1062" Action="None" />
+        <Rule Id="CA1002" Action="None" />
+        <Rule Id="IDE0301" Action="Error" />
+        <Rule Id="IDE0042" Action="Error" />
+        <Rule Id="IDE0056" Action="Error" />
+        <Rule Id="IDE0057" Action="Error" />
+        <Rule Id="IDE0051" Action="Error" />
+        <Rule Id="IDE0028" Action="Error" />
+        <Rule Id="IDE0300" Action="Error" />
+        <Rule Id="IDE0305" Action="Error" />
+        <Rule Id="IDE0301" Action="Error" />
+        <Rule Id="IDE0059" Action="Error" />
+        <Rule Id="IDE0303" Action="Error" />
+        <Rule Id="IDE0052" Action="Error" />
+        <Rule Id="IDE0022" Action="Error" />
+        <Rule Id="IDE0002" Action="Error" />
+        <Rule Id="IDE0060" Action="Error" />
+        <Rule Id="IDE0090" Action="Error" />
+        <Rule Id="IDE0044" Action="Error" />
+    </Rules>
+    <!-- Microsoft.CodeAnalysis.NetAnalyzers - Critical rules as errors -->
+    <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
+        <!-- Design Rules -->
+        <Rule Id="CA1000" Action="Error" />
+        <!-- Do not declare static members on generic types -->
+        <Rule Id="CA1001" Action="Error" />
+        <!-- Types that own disposable fields should be disposable -->
+        <Rule Id="CA1003" Action="Error" />
+        <!-- Use generic event handler instances -->
+        <Rule Id="CA1005" Action="Error" />
+        <!-- Avoid excessive parameters on generic types -->
+        <Rule Id="CA1008" Action="Error" />
+        <!-- Enums should have zero value -->
+        <Rule Id="CA1010" Action="Error" />
+        <!-- Generic interface should also be implemented -->
+        <Rule Id="CA1012" Action="Error" />
+        <!-- Mark assemblies with assembly version -->
+        <Rule Id="CA1017" Action="Error" />
+        <!-- Mark assemblies with ComVisible -->
+        <Rule Id="CA1018" Action="Error" />
+        <!-- Mark attributes with AttributeUsageAttribute -->
+        <Rule Id="CA1019" Action="Error" />
+        <!-- Define accessors for attribute arguments -->
+        <Rule Id="CA1021" Action="Error" />
+        <!-- Avoid out parameters -->
+        <Rule Id="CA1024" Action="Error" />
+        <!-- Use properties where appropriate -->
+        <Rule Id="CA1027" Action="Error" />
+        <!-- Mark enums with FlagsAttribute -->
+        <Rule Id="CA1028" Action="Error" />
+        <!-- Enum Storage should be Int32 -->
+        <Rule Id="CA1030" Action="Error" />
+        <!-- Use events where appropriate -->
+        <Rule Id="CA1032" Action="Error" />
+        <!-- Implement standard exception constructors -->
+        <Rule Id="CA1033" Action="Error" />
+        <!-- Interface methods should be callable by child types -->
+        <Rule Id="CA1034" Action="Error" />
+        <!-- Nested types should not be visible -->
+        <Rule Id="CA1036" Action="Error" />
+        <!-- Override methods on comparable types -->
+        <Rule Id="CA1040" Action="Error" />
+        <!-- Avoid empty interfaces -->
+        <Rule Id="CA1041" Action="Error" />
+        <!-- Provide ObsoleteAttribute message -->
+        <Rule Id="CA1043" Action="Error" />
+        <!-- Use Integral Or String Argument For Indexers -->
+        <Rule Id="CA1044" Action="Error" />
+        <!-- Properties should not be write only -->
+        <Rule Id="CA1045" Action="Error" />
+        <!-- Do not pass types by reference -->
+        <Rule Id="CA1046" Action="Error" />
+        <!-- Do not overload equality operator on reference types -->
+        <Rule Id="CA1047" Action="Error" />
+        <!-- Do not declare protected member in sealed type -->
+        <Rule Id="CA1048" Action="Error" />
+        <!-- Do not declare virtual members in sealed type -->
+        <Rule Id="CA1049" Action="Error" />
+        <!-- Types that own native resources should be disposable -->
+        <Rule Id="CA1050" Action="Error" />
+        <!-- Declare types in namespaces -->
+        <Rule Id="CA1051" Action="Error" />
+        <!-- Do not declare visible instance fields -->
+        <Rule Id="CA1052" Action="Error" />
+        <!-- Static holder types should be Static or NotInheritable -->
+        <Rule Id="CA1053" Action="Error" />
+        <!-- Static holder types should not have default constructors -->
+        <Rule Id="CA1054" Action="Error" />
+        <!-- URI-like parameters should not be strings -->
+        <Rule Id="CA1055" Action="Error" />
+        <!-- URI-like return values should not be strings -->
+        <Rule Id="CA1056" Action="Error" />
+        <!-- URI-like properties should not be strings -->
+        <Rule Id="CA1058" Action="Error" />
+        <!-- Types should not extend certain base types -->
+        <Rule Id="CA1060" Action="Error" />
+        <!-- Move pinvokes to native methods class -->
+        <Rule Id="CA1061" Action="Error" />
+        <!-- Do not hide base class methods -->
+        <Rule Id="CA1063" Action="Error" />
+        <!-- Implement IDisposable Correctly -->
+        <Rule Id="CA1064" Action="Error" />
+        <!-- Exceptions should be public -->
+        <Rule Id="CA1065" Action="Error" />
+        <!-- Do not raise exceptions in unexpected locations -->
+        <Rule Id="CA1066" Action="Error" />
+        <!-- Implement IEquatable when overriding Object.Equals -->
+        <Rule Id="CA1067" Action="Error" />
+        <!-- Override Object.Equals(object) when implementing IEquatable<T> -->
+        <Rule Id="CA1068" Action="Error" />
+        <!-- CancellationToken parameters must come last -->
+        <Rule Id="CA1069" Action="Error" />
+        <!-- Enums values should not be duplicated -->
+        <Rule Id="CA1070" Action="Error" />
+        <!-- Do not catch general exception types -->
+        <Rule Id="IDE0005" Action="Error" />
+        <!-- Use expression body for constructors -->
+        <Rule Id="CA1307" Action="Error" />
+        <Rule Id="CA1305" Action="Error" />
+        <Rule Id="CA1307" Action="Error" />
+        <!-- Performance Rules -->
+        <Rule Id="CA1805" Action="Error" />
+        <!-- Do not initialize unnecessarily -->
+        <Rule Id="CA1806" Action="Error" />
+        <!-- Do not ignore method results -->
+        <Rule Id="CA1810" Action="Error" />
+        <!-- Initialize reference type static fields inline -->
+        <Rule Id="CA1812" Action="Error" />
+        <!-- Avoid uninstantiated internal classes -->
+        <Rule Id="CA1813" Action="Error" />
+        <!-- Avoid unsealed attributes -->
+        <Rule Id="CA1814" Action="Error" />
+        <!-- Prefer jagged arrays over multidimensional -->
+        <Rule Id="CA1815" Action="Error" />
+        <!-- Override equals and operator equals on value types -->
+        <Rule Id="CA1816" Action="Error" />
+        <!-- Dispose methods should call SuppressFinalize -->
+        <Rule Id="CA1819" Action="Error" />
+        <!-- Properties should not return arrays -->
+        <Rule Id="CA1820" Action="Error" />
+        <!-- Test for empty strings using string length -->
+        <Rule Id="CA1821" Action="Error" />
+        <!-- Remove empty Finalizers -->
+        <Rule Id="CA1822" Action="Error" />
+        <!-- Mark members as static -->
+        <Rule Id="CA1823" Action="Error" />
+        <!-- Avoid unused private fields -->
+        <Rule Id="CA1824" Action="Error" />
+        <!-- Mark assemblies with NeutralResourcesLanguageAttribute -->
+        <Rule Id="CA1825" Action="Error" />
+        <!-- Avoid zero-length array allocations -->
+        <Rule Id="CA1826" Action="Error" />
+        <!-- Do not use Count() or LongCount() when Any() can be used -->
+        <Rule Id="CA1827" Action="Error" />
+        <!-- Do not use Count/LongCount when Any can be used -->
+        <Rule Id="CA1828" Action="Error" />
+        <!-- Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used -->
+        <Rule Id="CA1829" Action="Error" />
+        <!-- Use Length/Count property instead of Count() when available -->
+        <Rule Id="CA1830" Action="Error" />
+        <!-- Prefer strongly-typed Append and Insert method overloads on StringBuilder -->
+        <Rule Id="CA1831" Action="Error" />
+        <!-- Use AsSpan or AsMemory instead of Range-based indexers when appropriate -->
+        <Rule Id="CA1832" Action="Error" />
+        <!-- Use AsSpan or AsMemory instead of Range-based indexers when appropriate -->
+        <Rule Id="CA1833" Action="Error" />
+        <!-- Use AsSpan or AsMemory instead of Range-based indexers when appropriate -->
+        <Rule Id="CA1834" Action="Error" />
+        <!-- Consider using 'StringBuilder.Append(char)' when applicable -->
+        <Rule Id="CA1835" Action="Error" />
+        <!-- Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync' -->
+        <Rule Id="CA1836" Action="Error" />
+        <!-- Prefer IsEmpty over Count -->
+        <Rule Id="CA1837" Action="Error" />
+        <!-- Use 'Environment.ProcessId' -->
+        <Rule Id="CA1838" Action="Error" />
+        <!-- Avoid 'StringBuilder' parameters for P/Invokes -->
+        <Rule Id="CA1839" Action="Error" />
+        <!-- Use 'Environment.ProcessPath' -->
+        <Rule Id="CA1840" Action="Error" />
+        <!-- Use 'Environment.CurrentManagedThreadId' -->
+        <Rule Id="CA1841" Action="Error" />
+        <!-- Prefer Dictionary.Contains methods -->
+        <Rule Id="CA1842" Action="Error" />
+        <!-- Do not use 'WhenAll' with a single task -->
+        <Rule Id="CA1843" Action="Error" />
+        <!-- Do not use 'WaitAll' with a single task -->
+        <Rule Id="CA1844" Action="Error" />
+        <!-- Provide memory-based overrides of async methods when subclassing 'Stream' -->
+        <Rule Id="CA1845" Action="Error" />
+        <!-- Use span-based 'string.Concat' -->
+        <Rule Id="CA1846" Action="Error" />
+        <!-- Prefer 'AsSpan' over 'Substring' -->
+        <Rule Id="CA1847" Action="Error" />
+        <!-- Use char literal for a single character lookup -->
+        <Rule Id="CA1848" Action="Error" />
+        <!-- Use the LoggerMessage delegates -->
+        <Rule Id="CA1849" Action="Error" />
+        <!-- Call async methods when in an async method -->
+        <Rule Id="CA1850" Action="Error" />
+        <!-- Prefer static 'HashData' method over 'ComputeHash' -->
+        <!-- Security Rules -->
+        <Rule Id="CA2100" Action="Error" />
+        <!-- Review SQL queries for security vulnerabilities -->
+        <Rule Id="CA2101" Action="Error" />
+        <!-- Specify marshaling for P/Invoke string arguments -->
+        <Rule Id="CA2108" Action="Error" />
+        <!-- Review declarative security on value types -->
+        <Rule Id="CA2109" Action="Error" />
+        <!-- Review visible event handlers -->
+        <Rule Id="CA2119" Action="Error" />
+        <!-- Seal methods that satisfy private interfaces -->
+        <Rule Id="CA2153" Action="Error" />
+        <!-- Do Not Catch Corrupted State Exceptions -->
+        <Rule Id="CA2300" Action="Error" />
+        <!-- Do not use insecure deserializer BinaryFormatter -->
+        <Rule Id="CA2301" Action="Error" />
+        <!-- Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder -->
+        <Rule Id="CA2302" Action="Error" />
+        <!-- Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize -->
+        <Rule Id="CA2305" Action="Error" />
+        <!-- Do not use insecure deserializer LosFormatter -->
+        <Rule Id="CA2310" Action="Error" />
+        <!-- Do not use insecure deserializer NetDataContractSerializer -->
+        <Rule Id="CA2311" Action="Error" />
+        <!-- Do not deserialize without first setting NetDataContractSerializer.Binder -->
+        <Rule Id="CA2312" Action="Error" />
+        <!-- Ensure NetDataContractSerializer.Binder is set before deserializing -->
+        <Rule Id="CA2315" Action="Error" />
+        <!-- Do not use insecure deserializer ObjectStateFormatter -->
+        <Rule Id="CA2321" Action="Error" />
+        <!-- Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver -->
+        <Rule Id="CA2322" Action="Error" />
+        <!-- Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing -->
+        <Rule Id="CA2326" Action="Error" />
+        <!-- Do not use TypeNameHandling values other than None -->
+        <Rule Id="CA2327" Action="Error" />
+        <!-- Do not use insecure JsonSerializerSettings -->
+        <Rule Id="CA2328" Action="Error" />
+        <!-- Ensure that JsonSerializerSettings are secure -->
+        <Rule Id="CA2329" Action="Error" />
+        <!-- Do not deserialize with JsonSerializer using an insecure configuration -->
+        <Rule Id="CA2330" Action="Error" />
+        <!-- Ensure that JsonSerializer has a secure configuration when deserializing -->
+    </Rules>
+    <!-- StyleCop.Analyzers -->
+    <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+        <Rule Id="SA1633" Action="None" />
+        <!-- File should have header -->
+        <Rule Id="SA1101" Action="None" />
+        <!-- Prefix local calls with this -->
+        <Rule Id="SA1309" Action="None" />
+        <!-- Field names should not begin with underscore -->
+        <Rule Id="SA1413" Action="None" />
+        <!-- Use trailing comma in multi-line initializers -->
+        <Rule Id="SA1602" Action="Error" />
+        <!-- Enumeration items should be documented -->
+        <Rule Id="SA1600" Action="Error" />
+        <!-- Elements should be documented -->
+        <Rule Id="SA1611" Action="Error" />
+        <!-- Element parameters should be documented -->
+        <Rule Id="SA1615" Action="Error" />
+        <!-- Element return value should be documented -->
+        <Rule Id="SA1618" Action="Error" />
+        <!-- Generic type parameters should be documented -->
+        <!-- Abstract types should not have public constructors -->
+        <Rule Id="CA1002" Action="None" />
+        <Rule Id="CA1014" Action="None" />
+    </Rules>
+    <!-- ErrorProne.NET analyzers -->
+    <Rules AnalyzerId="ErrorProne.NET.CoreAnalyzers" RuleNamespace="ErrorProne.NET.CoreAnalyzers">
+        <Rule Id="ERP021" Action="Error" />
+        <!-- Use ConfigureAwait -->
+        <Rule Id="ERP022" Action="Error" />
+        <!-- Await in using statement -->
+        <Rule Id="ERP023" Action="Error" />
+        <!-- Possible multiple enumeration -->
+    </Rules>
+    <!-- Async best practices -->
+    <Rules AnalyzerId="AsyncAwaitBestPractices.Analyzers" RuleNamespace="AsyncAwaitBestPractices.Analyzers">
+        <Rule Id="AsyncifyInvocation" Action="Error" />
+        <Rule Id="AvoidAsyncVoid" Action="Error" />
+        <Rule Id="ConfigureAwaitFalse" Action="Error" />
+        <Rule Id="DoNotUseConfigureAwait" Action="Error" />
+    </Rules>
+</RuleSet>

@@ -1,0 +1,206 @@
+{
+    "name": "LQL Dark",
+    "type": "dark",
+    "colors": {
+        "editor.background": "#1C1C1C",
+        "editor.foreground": "#F8F8FF",
+        "editorCursor.foreground": "#FF4500",
+        "editor.lineHighlightBackground": "#36454F20",
+        "editor.selectionBackground": "#228B2240",
+        "editor.selectionHighlightBackground": "#228B2220",
+        "editorLineNumber.foreground": "#36454F",
+        "editorLineNumber.activeForeground": "#FF4500",
+        "editorIndentGuide.background": "#36454F40",
+        "editorIndentGuide.activeBackground": "#228B22",
+        "editorBracketMatch.background": "#FF450040",
+        "editorBracketMatch.border": "#FF4500",
+        "editorError.foreground": "#DC143C",
+        "editorWarning.foreground": "#FFA500",
+        "editorInfo.foreground": "#8A2BE2",
+        "editorHint.foreground": "#228B22",
+        "scrollbarSlider.background": "#36454F60",
+        "scrollbarSlider.hoverBackground": "#36454F80",
+        "scrollbarSlider.activeBackground": "#FF4500"
+    },
+    "tokenColors": [
+        {
+            "name": "Comment",
+            "scope": [
+                "comment",
+                "punctuation.definition.comment"
+            ],
+            "settings": {
+                "fontStyle": "italic",
+                "foreground": "#36454F"
+            }
+        },
+        {
+            "name": "Keywords",
+            "scope": [
+                "keyword.control.lql",
+                "keyword.operator.logical.lql",
+                "keyword.other.lql"
+            ],
+            "settings": {
+                "foreground": "#FF4500",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Pipeline Operator",
+            "scope": [
+                "keyword.operator.pipeline.lql"
+            ],
+            "settings": {
+                "foreground": "#228B22",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Lambda Operator",
+            "scope": [
+                "keyword.operator.lambda.lql"
+            ],
+            "settings": {
+                "foreground": "#8A2BE2",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Operators",
+            "scope": [
+                "keyword.operator.assignment.lql",
+                "keyword.operator.comparison.lql",
+                "keyword.operator.arithmetic.lql"
+            ],
+            "settings": {
+                "foreground": "#FFA500"
+            }
+        },
+        {
+            "name": "Query Functions",
+            "scope": [
+                "entity.name.function.query.lql"
+            ],
+            "settings": {
+                "foreground": "#228B22",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Aggregate Functions",
+            "scope": [
+                "entity.name.function.aggregate.lql"
+            ],
+            "settings": {
+                "foreground": "#8A2BE2",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Built-in Functions",
+            "scope": [
+                "entity.name.function.string.lql",
+                "entity.name.function.math.lql",
+                "entity.name.function.date.lql",
+                "entity.name.function.conditional.lql"
+            ],
+            "settings": {
+                "foreground": "#FFA500"
+            }
+        },
+        {
+            "name": "Strings",
+            "scope": [
+                "string.quoted.single.lql",
+                "string.quoted.double.lql"
+            ],
+            "settings": {
+                "foreground": "#32CD32"
+            }
+        },
+        {
+            "name": "String Escapes",
+            "scope": [
+                "constant.character.escape.lql"
+            ],
+            "settings": {
+                "foreground": "#FFA500"
+            }
+        },
+        {
+            "name": "Numbers",
+            "scope": [
+                "constant.numeric.decimal.lql",
+                "constant.numeric.integer.lql"
+            ],
+            "settings": {
+                "foreground": "#8A2BE2"
+            }
+        },
+        {
+            "name": "Boolean Constants",
+            "scope": [
+                "constant.language.boolean.lql"
+            ],
+            "settings": {
+                "foreground": "#FF4500",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Table Names",
+            "scope": [
+                "variable.other.table.lql"
+            ],
+            "settings": {
+                "foreground": "#F8F8FF",
+                "fontStyle": "bold"
+            }
+        },
+        {
+            "name": "Column References",
+            "scope": [
+                "variable.other.column.lql"
+            ],
+            "settings": {
+                "foreground": "#32CD32"
+            }
+        },
+        {
+            "name": "Variables",
+            "scope": [
+                "variable.other.lql"
+            ],
+            "settings": {
+                "foreground": "#F8F8FF"
+            }
+        },
+        {
+            "name": "Punctuation",
+            "scope": [
+                "punctuation.definition.string.begin",
+                "punctuation.definition.string.end",
+                "punctuation.separator.comma",
+                "punctuation.terminator.semicolon"
+            ],
+            "settings": {
+                "foreground": "#36454F"
+            }
+        },
+        {
+            "name": "Brackets",
+            "scope": [
+                "punctuation.section.brackets.begin",
+                "punctuation.section.brackets.end",
+                "punctuation.section.parens.begin",
+                "punctuation.section.parens.end",
+                "punctuation.section.braces.begin",
+                "punctuation.section.braces.end"
+            ],
+            "settings": {
+                "foreground": "#FFA500"
+            }
+        }
+    ]
+}

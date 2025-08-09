@@ -1,0 +1,11 @@
+users
+|> join(
+    (
+        orders
+        |> filter(fn(row) => row.orders.status = 'completed')
+        |> group_by(orders.user_id)
+        |> select(orders.user_id, count(*) as order_count)
+    ),
+    on = users.id = orders.user_id
+)
+|> select(users.name, orders.order_count)

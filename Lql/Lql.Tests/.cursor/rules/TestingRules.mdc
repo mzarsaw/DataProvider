@@ -1,0 +1,7 @@
+---
+description: C# Code Rules
+globs:
+alwaysApply: true
+---
+
+- YOU MUST REMOVE FLUENT ASSERTIONS WHEREVER YOU SEE IT

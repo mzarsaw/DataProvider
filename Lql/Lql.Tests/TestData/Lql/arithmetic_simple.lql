@@ -1,0 +1,9 @@
+products 
+|> select(
+    products.id,
+    products.price,
+    products.quantity,
+    products.price * products.quantity as total_value,
+    products.price + 10 as price_plus_ten,
+    products.quantity % 10 as quantity_mod_ten
+) 

@@ -1,0 +1,26 @@
+inventory
+|> select(
+    inventory.product_id,
+    inventory.current_stock,
+    inventory.reorder_point,
+    inventory.max_stock,
+    inventory.unit_cost,
+    inventory.selling_price,
+    ((inventory.selling_price - inventory.unit_cost) / inventory.unit_cost) * 100 as profit_margin_percent,
+    case
+        when inventory.current_stock <= inventory.reorder_point then
+            (inventory.max_stock - inventory.current_stock) * inventory.unit_cost * 1.1
+        else 0
+    end as reorder_cost_with_buffer
+)
+|> filter(fn(row) => 
+    (
+        (row.inventory.current_stock > 0 and row.inventory.selling_price > row.inventory.unit_cost) or
+        (row.inventory.current_stock = 0 and row.inventory.reorder_point > 0)
+    ) and
+    (
+        row.inventory.unit_cost > 0 and 
+        row.inventory.selling_price > 0 and
+        (row.inventory.selling_price / row.inventory.unit_cost) >= 1.2
+    )
+) 

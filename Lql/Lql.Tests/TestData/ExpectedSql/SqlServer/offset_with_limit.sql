@@ -1,0 +1,5 @@
+SELECT users.id, users.name
+FROM users
+ORDER BY users.id
+OFFSET 20 ROWS
+FETCH NEXT 10 ROWS ONLY

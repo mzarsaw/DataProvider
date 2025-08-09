@@ -1,0 +1,1 @@
+SELECT orders.id, orders.user_id, orders.total, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY total DESC) FROM orders

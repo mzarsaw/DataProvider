@@ -1,0 +1,1 @@
+SELECT users.id, users.name FROM users ORDER BY users.name ASC LIMIT 10

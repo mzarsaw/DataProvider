@@ -1,0 +1,146 @@
+{
+    "Select All": {
+        "prefix": "select",
+        "body": [
+            "${1:table_name}",
+            "|> select ${2:*}"
+        ],
+        "description": "Basic select statement"
+    },
+    "Select with Filter": {
+        "prefix": "selectf",
+        "body": [
+            "${1:table_name}",
+            "|> filter (${2:condition})",
+            "|> select ${3:*}"
+        ],
+        "description": "Select with filter"
+    },
+    "Join Tables": {
+        "prefix": "join",
+        "body": [
+            "${1:table1}",
+            "|> join ${2:table2} on ${3:condition}",
+            "|> select ${4:*}"
+        ],
+        "description": "Join two tables"
+    },
+    "Group By with Aggregation": {
+        "prefix": "groupby",
+        "body": [
+            "${1:table_name}",
+            "|> group_by ${2:column}",
+            "|> select ${2:column}, ${3:count(*)} as ${4:count}"
+        ],
+        "description": "Group by with aggregation"
+    },
+    "Order By": {
+        "prefix": "orderby",
+        "body": [
+            "${1:table_name}",
+            "|> order_by ${2:column} ${3|asc,desc|}",
+            "|> select ${4:*}"
+        ],
+        "description": "Order by clause"
+    },
+    "Let Binding": {
+        "prefix": "let",
+        "body": [
+            "let ${1:variable_name} = ${2:expression} in",
+            "${3:query}"
+        ],
+        "description": "Let binding for variables"
+    },
+    "Insert Statement": {
+        "prefix": "insert",
+        "body": [
+            "insert into ${1:table_name} (",
+            "    ${2:column1}, ${3:column2}",
+            ") values (",
+            "    ${4:value1}, ${5:value2}",
+            ")"
+        ],
+        "description": "Insert statement"
+    },
+    "Update Statement": {
+        "prefix": "update",
+        "body": [
+            "${1:table_name}",
+            "|> filter (${2:condition})",
+            "|> update {",
+            "    ${3:column} = ${4:value}",
+            "}"
+        ],
+        "description": "Update statement"
+    },
+    "Union Query": {
+        "prefix": "union",
+        "body": [
+            "${1:query1}",
+            "union",
+            "${2:query2}"
+        ],
+        "description": "Union of two queries"
+    },
+    "Having Clause": {
+        "prefix": "having",
+        "body": [
+            "${1:table_name}",
+            "|> group_by ${2:column}",
+            "|> having ${3:condition}",
+            "|> select ${4:*}"
+        ],
+        "description": "Having clause with group by"
+    },
+    "Limit and Offset": {
+        "prefix": "limit",
+        "body": [
+            "${1:table_name}",
+            "|> limit ${2:10} offset ${3:0}",
+            "|> select ${4:*}"
+        ],
+        "description": "Limit with offset"
+    },
+    "Case Expression": {
+        "prefix": "case",
+        "body": [
+            "case",
+            "    when ${1:condition1} then ${2:value1}",
+            "    when ${3:condition2} then ${4:value2}",
+            "    else ${5:default_value}",
+            "end"
+        ],
+        "description": "Case expression"
+    },
+    "Lambda Function": {
+        "prefix": "lambda",
+        "body": [
+            "fn ${1:param} => ${2:expression}"
+        ],
+        "description": "Lambda function"
+    },
+    "Arithmetic Operations": {
+        "prefix": "arith",
+        "body": [
+            "${1:table_name}",
+            "|> select ${2:column1} ${3|+,-,*,/,%|} ${4:column2} as ${5:result}"
+        ],
+        "description": "Arithmetic operations"
+    },
+    "String Functions": {
+        "prefix": "string",
+        "body": [
+            "${1:table_name}",
+            "|> select ${2|concat,substring,length,trim,upper,lower|}(${3:column}) as ${4:result}"
+        ],
+        "description": "String functions"
+    },
+    "Math Functions": {
+        "prefix": "math",
+        "body": [
+            "${1:table_name}",
+            "|> select ${2|round,floor,ceil,abs,sqrt|}(${3:column}) as ${4:result}"
+        ],
+        "description": "Math functions"
+    }
+}

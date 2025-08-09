@@ -1,0 +1,16 @@
+employees
+|> select(
+    employees.id,
+    employees.name,
+    employees.salary,
+    employees.age,
+    employees.department_id
+)
+|> filter(fn(row) => 
+    row.employees.salary >= 50000 and
+    row.employees.salary <= 150000 and
+    row.employees.age > 25 and
+    row.employees.age < 65 and
+    row.employees.department_id != 999 and
+    row.employees.salary <> 0
+) 

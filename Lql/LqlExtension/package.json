@@ -1,0 +1,174 @@
+{
+  "name": "lql-language-support",
+  "displayName": "Lambda Query Language (LQL)",
+  "description": "Language support for Lambda Query Language with syntax highlighting, IntelliSense, and error checking",
+  "version": "0.1.0",
+  "publisher": "lql-team",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Linters"
+  ],
+  "keywords": [
+    "lql",
+    "lambda",
+    "query",
+    "functional",
+    "sql",
+    "database"
+  ],
+
+  "galleryBanner": {
+    "color": "#1C1C1C",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/lambda-query-language"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/lambda-query-language/issues"
+  },
+  "homepage": "https://github.com/your-org/lambda-query-language#readme",
+  "activationEvents": [
+    "onLanguage:lql"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "lql",
+        "aliases": [
+          "Lambda Query Language",
+          "lql"
+        ],
+        "extensions": [
+          ".lql"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "lql",
+        "scopeName": "source.lql",
+        "path": "./syntaxes/lql.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "lql",
+        "path": "./snippets/lql.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "LQL Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/lql-dark.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "LQL Configuration",
+      "properties": {
+        "lql.languageServer.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the LQL language server"
+        },
+        "lql.languageServer.trace": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server"
+        },
+        "lql.validation.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable LQL validation"
+        },
+        "lql.formatting.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable LQL code formatting"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "lql.formatDocument",
+        "title": "Format LQL Document",
+        "category": "LQL"
+      },
+      {
+        "command": "lql.validateDocument",
+        "title": "Validate LQL Document",
+        "category": "LQL"
+      },
+      {
+        "command": "lql.showCompiledSql",
+        "title": "Show Compiled SQL",
+        "category": "LQL"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == lql",
+          "command": "lql.formatDocument",
+          "group": "1_modification"
+        },
+        {
+          "when": "resourceLangId == lql",
+          "command": "lql.showCompiledSql",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "lql.formatDocument",
+          "when": "resourceLangId == lql"
+        },
+        {
+          "command": "lql.validateDocument",
+          "when": "resourceLangId == lql"
+        },
+        {
+          "command": "lql.showCompiledSql",
+          "when": "resourceLangId == lql"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4",
+    "@vscode/test-electron": "^2.2.0",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.0.2"
+  }
+}

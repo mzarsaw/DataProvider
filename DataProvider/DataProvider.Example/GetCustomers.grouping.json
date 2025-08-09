@@ -1,0 +1,29 @@
+{
+    "QueryName": "GetCustomers",
+    "GroupingStrategy": "ParentChild",
+    "ParentEntity": {
+        "Name": "Customer",
+        "KeyColumns": ["Id"],
+        "Columns": [
+            "Id",
+            "CustomerName",
+            "Email",
+            "Phone",
+            "CreatedDate"
+        ]
+    },
+    "ChildEntity": {
+        "Name": "Address",
+        "KeyColumns": ["AddressId"],
+        "ParentKeyColumns": ["CustomerId"],
+        "Columns": [
+            "AddressId",
+            "CustomerId",
+            "Street",
+            "City",
+            "State",
+            "ZipCode",
+            "Country"
+        ]
+    }
+}

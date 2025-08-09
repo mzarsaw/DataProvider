@@ -1,0 +1,3 @@
+users 
+|> filter(fn(row) => row.users.age > 18 and row.users.country = 'US' or row.users.status = 'premium')
+|> select(users.id, users.name)

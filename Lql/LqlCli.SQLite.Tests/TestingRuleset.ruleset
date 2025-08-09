@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Testing Rules" Description="Code analysis rules for test projects." ToolsVersion="16.0">
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
+    <!-- Allow underscores in test method names -->
+    <Rule Id="CA1707" Action="None" />
+    <!-- Allow public types in test assemblies -->
+    <Rule Id="CA1515" Action="None" />
+    <!-- Allow string comparisons without explicit StringComparison -->
+    <Rule Id="CA1307" Action="None" />
+    <!-- Don't require ConfigureAwait in tests -->
+    <Rule Id="CA2007" Action="None" />
+  </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis">
+    <!-- Allow underscores in test method names -->
+    <Rule Id="CA1707" Action="None" />
+    <!-- Allow public types in test assemblies -->
+    <Rule Id="CA1515" Action="None" />
+    <!-- Allow string comparisons without explicit StringComparison -->
+    <Rule Id="CA1307" Action="None" />
+    <!-- Don't require ConfigureAwait in tests -->
+    <Rule Id="CA2007" Action="None" />
+  </Rules>
+</RuleSet>

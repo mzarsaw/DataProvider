@@ -1,0 +1,1 @@
+users |> select(users.id, users.name as user_name, users.email as contact_email)

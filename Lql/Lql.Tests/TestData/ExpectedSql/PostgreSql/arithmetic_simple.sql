@@ -1,0 +1,8 @@
+SELECT
+    products.id,
+    products.price,
+    products.quantity,
+    products.price * products.quantity AS total_value,
+    products.price + 10 AS price_plus_ten,
+    products.quantity % 10 AS quantity_mod_ten
+FROM products

@@ -1,0 +1,1 @@
+SELECT orders.user_id, COUNT(*) FROM orders GROUP BY orders.user_id HAVING COUNT(*) > 5

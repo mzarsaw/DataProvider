@@ -1,0 +1,9 @@
+---
+description: Testing Rules
+globs:
+alwaysApply: false
+---
+
+- Always prefer full e2e tests over unit tests
+- Minimize or eliminate mocking
+- Avoid duplicatation

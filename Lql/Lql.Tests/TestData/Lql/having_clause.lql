@@ -1,0 +1,4 @@
+orders 
+|> group_by(orders.user_id) 
+|> having(fn(group) => count(*) > 5)
+|> select(orders.user_id, count(*))

@@ -1,0 +1,10 @@
+with high_value_customers as (
+    orders
+    |> group_by(orders.user_id)
+    |> having(fn(group) => sum(orders.total) > 10000)
+    |> select(orders.user_id)
+)
+
+users
+|> join(high_value_customers, on = users.id = high_value_customers.user_id)
+|> select(users.id, users.name, users.email)

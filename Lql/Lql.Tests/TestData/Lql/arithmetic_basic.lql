@@ -1,0 +1,14 @@
+products 
+|> select(
+    products.id,
+    products.name,
+    products.price,
+    products.quantity,
+    products.price * products.quantity as total_value,
+    products.price + 10 as price_plus_ten,
+    products.price - 5 as price_minus_five,
+    products.price / 2 as half_price,
+    products.quantity % 10 as quantity_mod_ten,
+    (products.price * products.quantity) + products.shipping_cost as final_cost
+)
+|> filter(fn(row) => row.products.price > 0 and row.products.quantity > 0) 

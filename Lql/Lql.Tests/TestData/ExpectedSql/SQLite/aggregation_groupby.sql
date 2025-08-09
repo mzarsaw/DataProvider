@@ -1,0 +1,1 @@
+SELECT orders.user_id, orders.status, COUNT(*) AS order_count, SUM(orders.total) AS total_amount, AVG(orders.total) AS avg_amount FROM orders GROUP BY orders.user_id, orders.status HAVING COUNT(*) > 2 ORDER BY total_amount DESC

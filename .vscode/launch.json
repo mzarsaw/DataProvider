@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Blazor Website",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Lql/Website/bin/Debug/net9.0/LqlWebsite.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Lql/Website",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:3000;https://localhost:3001"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            }
+        },
+        {
+            "name": "Run DataProvider.Example",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/DataProvider/DataProvider.Example/bin/Debug/net9.0/DataProvider.Example.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/DataProvider/DataProvider.Example",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}

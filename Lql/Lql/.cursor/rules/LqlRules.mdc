@@ -1,0 +1,12 @@
+---
+description: Lql Rules
+globs:
+alwaysApply: true
+---
+
+- Split db specific logic out from shared code
+- Code reuse is critical! Push most code down to shared code rather than db specific code
+- Do not use Regex to parse!! FIX the Antlr grammar! If Antlr can't handle the syntax we want, try changing syntax to achieve something similar
+- Model the Select statements as algebraic data types. Use composition to model the differences between db platforms. Don't use OOP inheritance. 
+- Don't ignore linter errors
+- Immutabilty and FP style everyhere (no classes)

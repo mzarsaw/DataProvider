@@ -1,0 +1,1 @@
+SELECT users.name, orders.total, products.name FROM users INNER JOIN orders ON users.id = orders.user_id INNER JOIN products ON orders.product_id = products.id

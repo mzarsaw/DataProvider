@@ -1,0 +1,3 @@
+SELECT users.id, users.name
+FROM users
+WHERE users.age > 18 AND users.country = 'US' OR users.status = 'premium'
