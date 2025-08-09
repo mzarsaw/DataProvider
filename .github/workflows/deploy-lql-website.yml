@@ -1,0 +1,68 @@
+name: Deploy LQL Website to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Lql/Website/**'
+      - '.github/workflows/deploy-lql-website.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+          
+      - name: Install .NET WebAssembly workload
+        run: dotnet workload install wasm-tools
+        
+      - name: Restore dependencies
+        run: dotnet restore ./Lql/Website/LqlWebsite.csproj
+        
+      - name: Build
+        run: dotnet build ./Lql/Website/LqlWebsite.csproj -c Release --no-restore
+        
+      - name: Publish Blazor project
+        run: dotnet publish ./Lql/Website/LqlWebsite.csproj -c Release -o release --nologo
+        
+      - name: Update base href for GitHub Pages
+        run: |
+          REPO_NAME=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          if [ -f release/wwwroot/index.html ]; then
+            sed -i 's/<base href="\/" \/>/<base href="\/'$REPO_NAME'\/" \/>/g' release/wwwroot/index.html
+          fi
+        
+      - name: Add .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: release/wwwroot
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
