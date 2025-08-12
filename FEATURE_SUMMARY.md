@@ -10,196 +10,171 @@ This document presents a comprehensive strategic proposal for enhancing the Data
 
 | Feature | Branch | Priority | Estimated Effort | Expected LOC | Business Value |
 |---------|--------|----------|------------------|--------------|----------------|
-| Database Migrations | `feature/database-migrations` | 🔴 High | 3-4 weeks | ~800 LOC | Zero-downtime deployments |
-| Connection Pooling | `feature/connection-pooling` | 🔴 High | 2-3 weeks | ~900 LOC | 3-5x performance improvement |
-| Distributed Tracing | `feature/distributed-tracing` | 🟡 Medium | 2-3 weeks | ~600 LOC | Full observability |
-| NoSQL Support | `feature/nosql-support` | 🟡 Medium | 4-5 weeks | ~2600 LOC | Modern data patterns |
+
+
+| Template Customization | `feature/template-customization` | 🔴 High | 3-4 weeks | ~800 LOC | Complete generation flexibility |
+| LQL NoSQL Support | `feature/lql-nosql-support` | 🟡 Medium | 4-5 weeks | ~2600 LOC | LQL transpilation to document databases |
 | Core Middleware | `feature/core-middleware-implementations` | 🔴 High | 3-4 weeks | ~1800 LOC | Enterprise reliability |
 
-**Total Proposed Development**: ~6,700 lines of enterprise-grade code across 5 strategic enhancement areas
+**Total Proposed Development**: ~5,200 lines of enterprise-grade code across 3 strategic enhancement areas
+
+> **Note**: Connection pooling was removed from this proposal as ADO.NET already provides automatic, optimized connection pooling through connection string configuration. DataProvider works with standard `IDbConnection` instances and leverages existing ADO.NET infrastructure.
+
+> **Note**: Distributed tracing was replaced with Template Customization as the team lead correctly identified that hardcoded tracing would tie DataProvider to specific frameworks. Template customization allows users to inject any logging, tracing, or monitoring they prefer into the generated code, which is more flexible and architecturally sound.
+
+> **Note**: NoSQL support was redesigned from LINQ-style expressions to LQL-based transpilation. The team lead correctly identified that LINQ expressions contradict DataProvider's core philosophy of using explicit SQL/LQL files instead of runtime query builders (which is why DataProvider exists as an alternative to EF).
 
 ---
 
-## 🗄️ Proposed Feature 1: Database Migrations System
+## 🎨 Proposed Feature 1: Template Customization System
 
 ### 📁 Proposed Implementation Structure
 ```
-DataProvider/DataProvider/Migrations/
-├── IMigrationRunner.cs           # Core migration interface design
-├── MigrationRunner.cs           # Full migration implementation
-└── MigrationTypes.cs           # Migration data types and enums
+DataProvider/DataProvider/Templates/
+├── ITemplateEngine.cs               # Template processing interface
+├── TemplateProcessor.cs             # Template variable interpolation engine
+├── DefaultTemplates.cs              # Built-in template presets
+└── TemplateConfiguration.cs         # Template configuration types
 
 DataProvider/DataProvider.Example/
-└── MigrationsExample.cs        # Comprehensive usage examples
+├── Templates/
+│   ├── MinimalTemplate.cs           # Basic template example
+│   ├── LoggingTemplate.cs           # Template with ILogger injection
+│   └── TracingTemplate.cs           # Template with tracing integration
+└── TemplateCustomizationExample.cs  # Complete customization examples
 ```
 
 ### 🎯 Proposed Key Features
-- **Version-based migration tracking** with semantic versioning support
-- **Transaction management** with configurable isolation levels
-- **Automatic rollback** on migration failures with full cleanup
-- **Migration validation** including dependency checking and SQL syntax validation
-- **History tracking** with checksums, execution times, and success/failure logging
-- **Multi-database support** (SQLite, SQL Server, PostgreSQL) with database-specific optimizations
+- **User-defined code templates** for complete control over generated method structure
+- **Rich template variable system** with support for conditional logic and loops
+- **Custom interface injection** (ILogger, ITracer, custom abstractions)
+- **Multiple template presets** (Minimal, Logging, Tracing, Enterprise, Security)
+- **Template validation** at build time with comprehensive error reporting
+- **Hot-reload support** for rapid template development and testing
 
 ### 💡 Proposed Usage Pattern
 ```csharp
-// Proposed API design for migration management
-var migrationRunner = new MigrationRunner(connection, new MigrationConfig());
-
-// Apply all pending migrations with automatic rollback on failure
-var result = await migrationRunner.MigrateToLatestAsync();
-
-// Rollback to specific version with validation
-var rollbackResult = await migrationRunner.RollbackToVersionAsync("1.2.0");
-```
-
-### 🔧 Configuration Options
-- **Transaction modes**: Required, RequiresNew, Suppress
-- **Validation levels**: None, Basic, Strict, Custom
-- **Backup strategies**: None, Automatic, Manual
-- **Timeout settings**: Per-migration and global timeouts
-
----
-
-## 🔗 Proposed Feature 2: Intelligent Connection Pooling
-
-### 📁 Proposed Implementation Structure
-```
-DataProvider/DataProvider/ConnectionPooling/
-├── IConnectionPool.cs              # Pool interface with factory methods
-├── BaseConnectionPool.cs           # Abstract base with common functionality
-├── PooledConnectionWrapper.cs      # Connection lifecycle management
-└── SqliteConnectionPool.cs         # SQLite-specific optimizations
-
-DataProvider/DataProvider.Example/
-└── ConnectionPoolingExample.cs     # Real-world usage scenarios
-```
-
-### 🎯 Proposed Key Features
-- **Smart connection lifecycle management** with automatic creation, validation, and disposal
-- **Health monitoring** with configurable health checks and automatic recovery
-- **Performance statistics** including hit rates, creation times, and utilization metrics
-- **Connection validation** with automatic retry and replacement of failed connections
-- **Database-specific optimizations** (SQLite WAL mode, pragmas, connection string tuning)
-- **Multiple configuration presets** (HighPerformance, Balanced, Conservative)
-
-### 💡 Proposed Usage Pattern
-```csharp
-// Proposed API design for intelligent connection pooling
-var pool = IConnectionPool.Create(connectionString, new ConnectionPoolConfig
+// DataProvider.json configuration
 {
-    MinPoolSize = 5,
-    MaxPoolSize = 20,
-    HealthCheckInterval = TimeSpan.FromMinutes(1)
-});
+  "connectionString": "...",
+  "templateConfig": {
+    "methodTemplate": "Templates/LoggingTemplate.cs",
+    "loggerInterface": "Microsoft.Extensions.Logging.ILogger",
+    "tracingInterface": "System.Diagnostics.Activity"
+  },
+  "queries": [...]
+}
 
-// Get optimized pooled connection with automatic lifecycle management
-using var connection = await pool.GetConnectionAsync();
-```
-
-### 📊 Expected Performance Improvements
-- **3-5x faster** connection acquisition vs. new connections
-- **85%+ pool hit rate** in typical scenarios
-- **Automatic scaling** based on demand
-- **Real-time monitoring** with detailed metrics
-
----
-
-## 📊 Proposed Feature 3: Distributed Tracing & Observability
-
-### 📁 Proposed Implementation Structure
-```
-DataProvider/DataProvider/Tracing/
-├── IDbTracing.cs                    # OpenTelemetry-compatible tracing interface
-├── ConsoleDbTracing.cs             # Console-based implementation
-└── TracingDbConnectionExtensions.cs # Database operation extensions
-
-DataProvider/DataProvider.Example/
-└── DistributedTracingExample.cs    # Complete observability examples
-```
-
-### 🎯 Proposed Key Features
-- **OpenTelemetry-compatible interface** ready for production observability stacks
-- **Comprehensive operation support** for queries, commands, transactions, and streaming
-- **Automatic parameter sanitization** to protect sensitive data in traces
-- **Event recording and exception tracking** with full contextual information
-- **Configurable sampling** and performance filtering with minimum duration thresholds
-- **Child activity support** for nested operations and complex workflows
-
-### 💡 Proposed Usage Pattern
-```csharp
-// Proposed API design for comprehensive observability
-var tracing = IDbTracing.CreateConsoleTracing(new TracingConfig
+// Templates/LoggingTemplate.cs
+public static async Task<Result<ImmutableList<{{FileName}}>, SqlError>> {{MethodName}}Async(
+    this {{ConnectionType}} connection,
+    {{#Parameters}}{{ParameterType}} {{ParameterName}},{{/Parameters}}
+    ILogger? logger = null)
 {
-    SampleRate = 0.1, // Sample 10% of operations for production efficiency
-    MinimumDuration = TimeSpan.FromMilliseconds(100)
-});
-
-// Automatic distributed tracing for all database operations
-var result = await connection.QueryAsync<User>("SELECT * FROM Users", tracing: tracing);
+    using var activity = Activity.Current?.Source.StartActivity("{{MethodName}}");
+    logger?.LogInformation("Executing {{MethodName}}");
+    
+    try
+    {
+        {{GeneratedDatabaseCode}}
+        logger?.LogInformation("{{MethodName}} completed successfully");
+        return new Result<ImmutableList<{{FileName}}>, SqlError>.Success(results);
+    }
+    catch (Exception ex)
+    {
+        logger?.LogError(ex, "{{MethodName}} failed");
+        return new Result<ImmutableList<{{FileName}}>, SqlError>.Failure(SqlError.FromException(ex));
+    }
+}
 ```
 
-### 🔍 Expected Observability Features
-- **Request correlation** across distributed systems
-- **Performance bottleneck identification** with timing information
-- **Error tracking** with full exception context
-- **Security-conscious** parameter and connection string sanitization
+### 🔧 Template Variable System
+- **{{FileName}}**: The SQL file name for type generation
+- **{{MethodName}}**: The generated method name
+- **{{ConnectionType}}**: Database-specific connection type
+- **{{Parameters}}**: Iteration over SQL parameters with nested variables
+- **{{GeneratedDatabaseCode}}**: Insertion point for core database logic
+- **Conditional blocks**: `{{#if condition}}...{{/if}}` for optional code sections
 
 ---
 
-## 🍃 Proposed Feature 4: NoSQL Document Database Support
+## 🍃 Proposed Feature 2: LQL NoSQL Document Database Support
 
 ### 📁 Proposed Implementation Structure
 ```
-DataProvider/DataProvider/NoSql/
-├── INoSqlProvider.cs              # Comprehensive document database interface
-├── InMemoryNoSqlProvider.cs       # Full-featured in-memory implementation
-└── NoSqlExtensions.cs             # Fluent query builders and extensions
+Lql/Lql.MongoDB/
+├── MongoDbContext.cs              # MongoDB-specific LQL transpilation context
+├── MongoDbFunctionMapping.cs      # MongoDB query function mappings
+└── MongoDbQueryTranspiler.cs      # LQL to MongoDB aggregation pipeline transpiler
+
+Lql/Lql.CosmosDb/
+├── CosmosDbContext.cs             # Cosmos DB SQL API transpilation context
+├── CosmosDbFunctionMapping.cs     # Cosmos DB function mappings
+└── CosmosDbQueryTranspiler.cs     # LQL to Cosmos DB SQL transpiler
+
+DataProvider/DataProvider.MongoDB/
+├── MongoDbFileGenerator.cs        # Code generator for MongoDB extension methods
+└── MongoDbSchemaInspector.cs      # Document collection schema inspection
 
 DataProvider/DataProvider.Example/
-└── NoSqlExample.cs                # Extensive usage examples and patterns
+├── GetActiveUsers.lql             # Example LQL queries for document databases
+├── GetOrdersByStatus.lql          # Complex document queries
+└── NoSqlLqlExample.cs             # Usage examples with generated methods
 ```
 
 ### 🎯 Proposed Key Features
-- **Comprehensive CRUD operations** with functional Result<T> pattern
-- **Fluent query builders** with LINQ-style syntax and expression-based filtering
-- **Advanced querying**: aggregation pipelines, indexing, transactions, streaming
-- **Provider architecture** ready for MongoDB, Cosmos DB, and other NoSQL databases
-- **Type-safe operations** with strong typing throughout the API surface
-- **Streaming support** for large datasets with configurable batching
+- **LQL transpilation to NoSQL query languages** (MongoDB aggregation, Cosmos DB SQL)
+- **File-based approach** using `.lql` files, consistent with DataProvider philosophy
+- **Document schema inspection** at build time for type-safe validation
+- **Database-specific code generation** creating extension methods for document collections
+- **Unified LQL syntax** that works across SQL Server, SQLite, MongoDB, Cosmos DB
+- **Anti-LINQ approach** avoiding runtime query builders in favor of compile-time transpilation
 
 ### 💡 Proposed Usage Pattern
+```lql
+-- GetActiveEngineers.lql (transpiles to MongoDB/Cosmos DB)
+users
+|> filter(department = 'Engineering' and active = true and age >= 25)
+|> select(name, email, age, skills, profile.location)
+|> order_by(age desc)
+|> limit(20)
+```
+
+**Transpiles to MongoDB:**
+```javascript
+db.users.find(
+  { department: 'Engineering', active: true, age: { $gte: 25 } },
+  { name: 1, email: 1, age: 1, skills: 1, 'profile.location': 1 }
+).sort({ age: -1 }).limit(20)
+```
+
+**Generated C# Extension Method:**
 ```csharp
-// Proposed API design for unified SQL/NoSQL operations
-var userProvider = NoSqlProviderFactory.CreateInMemoryProvider<User>();
+// Generated from GetActiveEngineers.lql
+public static async Task<Result<ImmutableList<User>, SqlError>> GetActiveEngineersAsync(
+    this IMongoCollection<User> collection)
+{
+    var filter = Builders<User>.Filter.And(
+        Builders<User>.Filter.Eq(u => u.Department, "Engineering"),
+        Builders<User>.Filter.Eq(u => u.Active, true),
+        Builders<User>.Filter.Gte(u => u.Age, 25)
+    );
+    // ... generated MongoDB.Driver code
+}
 
-// Fluent query builder with LINQ-style syntax
-var engineers = await userProvider.Query()
-    .Where(u => u.Department == "Engineering")
-    .Where(u => u.Age >= 25)
-    .OrderByDescending(u => u.Age)
-    .Skip(10)
-    .Take(20)
-    .ToListAsync();
-
-// Complex aggregation pipeline with functional composition
-var departmentStats = await userProvider.AggregateAsync(
-    NoSqlExtensions.Aggregate<User>()
-        .Match(u => u.Active == true)
-        .Group(u => u.Department, new CountAggregation<User>())
-        .Sort(NoSqlExtensions.Sort<User>().Descending(u => u.Count).Build())
-        .Build<DepartmentStats>());
+// Usage in application
+var engineers = await mongoCollection.GetActiveEngineersAsync();
 ```
 
 ### 🔧 Proposed Advanced Features
-- **Index management** with TTL, uniqueness, and compound indexes
-- **Transaction support** with automatic commit/rollback
-- **Collection statistics** and performance monitoring
-- **Update builders** with Set, Increment, and Unset operations
+- **Complex aggregation support** through LQL pipeline operations
+- **Multiple NoSQL database targets** from same LQL source files
+- **Document relationship modeling** through LQL join operations where applicable
+- **Schema validation** ensuring LQL queries match document collection structures
 
 ---
 
-## ⚙️ Proposed Feature 5: Production-Grade Middleware System
+## ⚙️ Proposed Feature 3: Production-Grade Middleware System
 
 ### 📁 Proposed Implementation Structure
 ```
@@ -286,14 +261,15 @@ Each feature branch will undergo comprehensive evaluation:
 ## 📊 Projected Technical Metrics
 
 ### Expected Code Quality
-- **Total Development Scope**: ~6,700 LOC across all strategic enhancement areas
+- **Total Development Scope**: ~5,200 LOC across all strategic enhancement areas
 - **Documentation Coverage**: Target 100% XML documentation on public APIs
 - **Type Safety**: 100% strongly typed with nullable reference types
 - **Error Handling**: 100% Result<T> pattern implementation, eliminating exception-based flows
 
 ### Projected Performance Characteristics
-- **Connection Pooling**: Expected 3-5x performance improvement over direct connections
-- **Streaming Operations**: Memory-efficient processing for large datasets
+- **Template Processing**: Zero runtime overhead (all processing at build time)
+- **Code Generation**: Fast template interpolation with caching for incremental builds
+- **Streaming Operations**: Memory-efficient processing for large datasets  
 - **Middleware Overhead**: Target <1ms additional latency for full middleware stack
 - **NoSQL Operations**: Sub-millisecond in-memory operations for development scenarios
 
@@ -349,15 +325,15 @@ Each feature branch will undergo comprehensive evaluation:
 
 ## 🎉 Strategic Enhancement Proposal Summary
 
-This comprehensive proposal outlines **5 major strategic enhancements** that will transform DataProvider from a functional database access library into a **comprehensive, enterprise-grade data platform**.
+This comprehensive proposal outlines **3 major strategic enhancements** that will transform DataProvider from a functional database access library into a **comprehensive, enterprise-grade data platform**.
 
 ### Projected Strategic Outcomes
 🎯 **Enterprise-Grade Reliability** through fault tolerance, retries, and circuit breakers  
 🎯 **Comprehensive Security** with SQL injection protection and parameter sanitization  
-🎯 **Production Observability** with distributed tracing and performance monitoring  
-🎯 **Modern Data Patterns** with unified SQL and NoSQL support  
+🎯 **Complete Customization** with user-defined templates and flexible code generation  
+🎯 **Modern Data Patterns** with unified LQL syntax for SQL and NoSQL databases  
 🎯 **Enhanced Developer Experience** with fluent APIs and extensive documentation  
-🎯 **Performance Optimization** with intelligent connection pooling and caching  
+🎯 **Performance Optimization** with efficient middleware and monitoring  
 
 ### Expected Impact on Development Teams
 - **40% Reduction in Development Time**: Fluent APIs and comprehensive examples will accelerate development
@@ -372,6 +348,6 @@ This proposal demonstrates enterprise software development best practices with c
 
 *This strategic enhancement proposal serves as a comprehensive plan for transforming DataProvider into an industry-leading data platform and provides detailed information for executive approval, resource allocation, and implementation planning.*
 
-**Total Project Scope**: 5 Strategic Features, 6,700+ LOC, Enterprise-Grade Quality  
+**Total Project Scope**: 3 Strategic Features, 5,200+ LOC, Enterprise-Grade Quality  
 **Proposal Status**: 📋 Ready for Executive Review and Approval  
 **Next Phase**: Resource Allocation and Development Team Assignment

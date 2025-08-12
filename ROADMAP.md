@@ -19,92 +19,54 @@ This roadmap presents a strategic plan to transform the DataProvider project fro
 
 ## 📅 Proposed Implementation Timeline
 
-### Phase 1: Foundation & Infrastructure (Months 1-2) 🚧 **PLANNED**
+### Phase 1: Core Enhancement Features (Months 1-2) 🚧 **PLANNED**
 
-#### 🗄️ Database Migrations System
+#### 🎨 Template Customization System
 **Priority:** High  
 **Effort:** 3-4 weeks  
 **Timeline:** Month 1-2
 
 **Proposed Features:**
-- **Version-based migration system** with automatic tracking and rollback capabilities
-- **Transaction management** with configurable modes (Required, RequiresNew, Suppress)
-- **Migration validation** and dependency checking with comprehensive error handling
-- **Automatic migration file generation** with professional templates
-- **History tracking** with checksum verification and audit trails
-- **Multi-database support** (SQLite, SQL Server, PostgreSQL)
+- **User-defined code templates** for complete control over generated methods
+- **Template variable system** with rich interpolation support
+- **Custom logging interface injection** (ILogger, Serilog, NLog, custom)
+- **Custom tracing interface injection** (OpenTelemetry, Application Insights, custom)
+- **Middleware injection points** for cross-cutting concerns
+- **Multiple template presets** (Minimal, Logging, Tracing, Enterprise)
 
 **Expected Business Value:**
-- **Zero-downtime deployments**: Reduce deployment risk by 90%
-- **Automated rollback**: Eliminate manual intervention in failed deployments
-- **Team collaboration**: Streamlined schema management across development teams
-- **Production safety**: Comprehensive validation before schema changes
-
-#### 🔗 Intelligent Connection Pooling
-**Priority:** High  
-**Effort:** 2-3 weeks  
-**Timeline:** Month 1-2
-
-**Proposed Features:**
-- **Smart connection lifecycle management** with automatic pooling
-- **Real-time health monitoring** with configurable alerts and recovery
-- **Performance statistics** and efficiency tracking
-- **Connection validation** and automatic recovery for failed connections
-- **Database-specific optimizations** (SQLite WAL mode, pragmas, tuning)
-- **Multiple configuration presets** (HighPerformance, Balanced, Conservative)
-
-**Expected Business Value:**
-- **3-5x performance improvement** in connection acquisition times
-- **Reduced infrastructure costs** through optimized resource utilization
-- **Improved system stability** with automatic failure recovery
-- **Enhanced monitoring** with real-time health metrics
-
-#### 📊 Distributed Tracing & Observability
-**Priority:** Medium  
-**Effort:** 2-3 weeks  
-**Timeline:** Month 2
-
-**Proposed Features:**
-- **OpenTelemetry-compatible tracing interface** (ready for OTel integration)
-- **Console-based tracing** for immediate development feedback
-- **Comprehensive operation support** (queries, commands, transactions, streaming)
-- **Automatic parameter sanitization** for sensitive data protection
-- **Event recording and exception tracking** with full context
-- **Configurable sampling** and performance filtering
-
-**Expected Business Value:**
-- **Reduced MTTR**: 50% faster issue resolution through comprehensive tracing
-- **Performance optimization**: Identify and eliminate bottlenecks proactively
-- **Enhanced security**: Automatic sanitization of sensitive data in logs
-- **Improved debugging**: Full request context for complex distributed systems
+- **Complete flexibility**: Users can inject any logging/tracing framework they prefer
+- **Zero library coupling**: DataProvider remains framework-agnostic
+- **Enhanced customization**: Teams can standardize on their preferred patterns
+- **Better integration**: Generated code matches existing application architecture
 
 ---
 
-### Phase 2: Advanced Features & Modern Patterns (Months 3-4) 🔮 **PLANNED**
+### Phase 2: Advanced Features & Modern Patterns (Months 2-3) 🔮 **PLANNED**
 
-#### 🍃 NoSQL Document Database Support
+#### 🍃 LQL NoSQL Document Database Support
 **Priority:** Medium  
 **Effort:** 4-5 weeks  
-**Timeline:** Month 3-4
+**Timeline:** Month 2-3
 
 **Proposed Features:**
-- **Comprehensive document database interface** with functional programming patterns
-- **Full CRUD operations** with Result<T> pattern for robust error handling
-- **Fluent query builders** with LINQ-style syntax and expression-based filtering
-- **Advanced features**: aggregation pipelines, indexing, transactions, streaming
-- **Provider architecture** ready for MongoDB and Cosmos DB implementations
-- **In-memory provider** for testing and development
+- **LQL transpilation to document queries** for MongoDB, Cosmos DB, and other NoSQL databases
+- **File-based approach** using `.lql` files that transpile to database-specific query languages
+- **Database-specific transpilers** extending existing LQL architecture
+- **Unified LQL syntax** that works consistently across SQL and NoSQL databases
+- **Code generation** creating extension methods for document collections (`IMongoCollection<T>`, etc.)
+- **Document schema inspection** at build time for type-safe query validation
 
 **Expected Business Value:**
-- **Modern architecture enablement**: Support for microservices and cloud-native patterns
-- **Unified data access**: Single API for both SQL and NoSQL operations
-- **Developer productivity**: Type-safe document operations with rich querying
-- **Future-ready**: Easy migration to modern NoSQL databases
+- **Consistent query language**: Same LQL syntax works for SQL Server, SQLite, MongoDB, Cosmos DB
+- **Compile-time safety**: Validate document queries at build time, eliminating runtime errors
+- **Anti-LINQ philosophy**: Avoid EF's limitations through explicit file-based queries
+- **Modern data patterns**: Support document databases without runtime query builders
 
 #### ⚙️ Production-Grade Middleware System
 **Priority:** High  
 **Effort:** 3-4 weeks  
-**Timeline:** Month 3-4
+**Timeline:** Month 2-3
 
 **Proposed Features:**
 - **Comprehensive middleware library**: Logging, Performance, Retry, Validation, Circuit Breaker, Timeout
@@ -168,13 +130,13 @@ All features have been designed following these core principles:
 | Feature Category | Current State | Proposed Enhancement | Expected Value |
 |------------------|---------------|---------------------|----------------|
 | **Database Operations** | Basic SQL execution | LQL + SQL with compile-time safety | Type safety, expressiveness |
-| **Connection Management** | Manual connection handling | Intelligent pooling with health monitoring | 3-5x performance improvement |
+
 | **Error Handling** | Exception-based | Result<T> pattern with explicit errors | Predictable, functional error handling |
-| **Monitoring** | Basic logging | Comprehensive tracing and metrics | Full observability stack |
+| **Code Generation** | Hardcoded templates | User-defined customizable templates | Complete generation flexibility |
 | **Security** | Basic validation | SQL injection protection, parameter sanitization | Enterprise-grade security |
 | **Reliability** | Manual error handling | Circuit breakers, retries, timeouts | Production-grade fault tolerance |
-| **Database Support** | SQL only | SQL + NoSQL with unified API | Modern application architectures |
-| **Schema Management** | Manual scripts | Automated migrations with rollback | Zero-downtime deployments |
+| **Database Support** | SQL only | SQL + NoSQL with unified LQL syntax | Modern application architectures |
+
 | **Development Experience** | Good | Exceptional with fluent APIs and examples | 40% productivity boost |
 
 ---
@@ -207,11 +169,9 @@ All features have been designed following these core principles:
 
 We recommend implementing these enhancements using a **feature branch strategy** to minimize risk and enable parallel development:
 
-1. **`feature/database-migrations`** - Schema versioning and migration management
-2. **`feature/connection-pooling`** - Intelligent connection lifecycle management  
-3. **`feature/distributed-tracing`** - Observability and performance monitoring
-4. **`feature/nosql-support`** - Document database operations and querying
-5. **`feature/core-middleware-implementations`** - Production-grade middleware stack
+1. **`feature/template-customization`** - User-defined code generation templates
+2. **`feature/lql-nosql-support`** - LQL transpilation to NoSQL document databases
+3. **`feature/core-middleware-implementations`** - Production-grade middleware stack
 
 ### Risk Mitigation Strategy
 - **Isolated Development**: Each feature developed in separate branches to minimize integration risk
@@ -221,7 +181,7 @@ We recommend implementing these enhancements using a **feature branch strategy**
 
 ### Proposed Rollout Plan
 
-#### Phase 1: Development & Implementation (3-4 months)
+#### Phase 1: Development & Implementation (2 months)
 - **Feature development** in isolated branches with comprehensive testing
 - **Security review** of all SQL injection protection and parameter handling mechanisms
 - **Performance benchmarking** with realistic production workloads
@@ -229,7 +189,7 @@ We recommend implementing these enhancements using a **feature branch strategy**
 
 #### Phase 2: Quality Assurance & Documentation (1 month)
 - **Comprehensive API documentation** with examples and best practices
-- **Migration guides** for seamless adoption by existing projects
+- **Integration guides** for seamless adoption by existing projects
 - **Performance optimization** guides and configuration recommendations
 - **Security compliance** documentation and audit reports
 
@@ -358,12 +318,12 @@ We recommend implementing these enhancements using a **feature branch strategy**
 This strategic enhancement plan will transform DataProvider from a functional database library into a **comprehensive, enterprise-grade data platform** that delivers measurable business value and competitive advantage.
 
 ### Proposed Investment
-- **Development Timeline**: 4-5 months for core implementation
+- **Development Timeline**: 2-3 months for core implementation
 - **Expected Budget**: Moderate investment with significant ROI
 - **Risk Level**: Low (feature branch approach minimizes integration risk)
 
 ### Expected Return on Investment
-📈 **Performance**: 3-5x improvement in database operation efficiency  
+📈 **Performance**: Improved database operation efficiency through optimized middleware  
 📈 **Reliability**: 99.9% uptime through fault tolerance and automated recovery  
 📈 **Productivity**: 40% reduction in database-related development time  
 📈 **Security**: 100% protection against common SQL injection vulnerabilities  

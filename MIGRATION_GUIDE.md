@@ -1,8 +1,8 @@
-# 📈 DataProvider Strategic Enhancement Adoption Guide
+# 📈 DataProvider Adoption and Integration Guide
 
 ## Overview
 
-This comprehensive guide provides step-by-step instructions for adopting the proposed DataProvider enhancements in existing projects and migrating from traditional database access patterns to the enhanced functional approach. This guide supports the strategic implementation roadmap presented to leadership.
+This comprehensive guide provides step-by-step instructions for adopting DataProvider in existing projects and migrating from traditional database access patterns to DataProvider's compile-time safe, functional approach. This guide focuses on the actual migration needs of teams adopting DataProvider as a code generation tool.
 
 ---
 
@@ -17,103 +17,76 @@ This comprehensive guide provides step-by-step instructions for adopting the pro
    - Error handling approaches (try/catch vs. explicit error types)
    - Logging and monitoring capabilities
 
-2. **Identify enhancement opportunities**
-   - High-traffic database operations (candidates for proposed connection pooling)
-   - Error-prone operations (candidates for proposed middleware and retry logic)
-   - Complex queries (candidates for proposed LQL conversion)
-   - Performance bottlenecks (candidates for proposed tracing and optimization)
+2. **Identify adoption opportunities**
+   - High-traffic database operations (candidates for middleware optimization)
+   - Error-prone operations (candidates for middleware and retry logic)
+   - Complex queries (candidates for LQL conversion)
+   - Performance bottlenecks (candidates for tracing and optimization)
 
-3. **Plan strategic feature adoption order**
+3. **Plan DataProvider adoption strategy**
    ```
-   Phase 1: Foundation Infrastructure (Migrations, Pooling) - Months 1-2
-   Phase 2: Observability Enhancement (Tracing, Middleware) - Months 2-3
-   Phase 3: Advanced Capabilities (NoSQL, Advanced Middleware) - Months 3-4
+   Phase 1: Core DataProvider Integration (Code Generation Setup) - Weeks 1-2
+   Phase 2: Enhanced Features (Template Customization, Middleware) - Weeks 3-4
+   Phase 3: Advanced Capabilities (LQL NoSQL, Advanced Middleware) - Weeks 5-6
    ```
 
-### Implementation Phase (Following Strategic Roadmap)
+### Implementation Phase (DataProvider Adoption)
 
-#### Phase 1: Foundation Infrastructure Implementation
+#### Phase 1: Core DataProvider Integration
 
-##### 1.1 Proposed Database Migrations System
+##### 1.1 DataProvider Setup and Code Generation
 ```csharp
-// Current State: Manual schema changes
-// Manual SQL scripts, no versioning, rollback challenges
+// Current State: Manual ADO.NET database access
+using var connection = new SqlConnection(connectionString);
+await connection.OpenAsync();
+using var command = new SqlCommand("SELECT * FROM Users WHERE Active = @active", connection);
+command.Parameters.AddWithValue("@active", true);
+// Manual result mapping...
 
-// Proposed Enhancement: Automated migration management
-var migrationRunner = new MigrationRunner(connection, new MigrationConfig
+// After DataProvider: Generated extension methods with compile-time safety
+using var connection = new SqlConnection(connectionString);
+var result = await connection.GetUsersAsync(active: true);
+if (result is Result<IReadOnlyList<User>, SqlError>.Success users)
 {
-    MigrationsPath = "Migrations",
-    TransactionMode = TransactionMode.Required,
-    ValidationLevel = ValidationLevel.Strict
-});
-
-// Proposed automated migration workflow
-var migrationResult = await migrationRunner.MigrateToLatestAsync();
-if (migrationResult is Result<MigrationSummary, SqlError>.Success migration)
-{
-    Console.WriteLine($"Applied {migration.Value.AppliedMigrations.Count} migrations successfully");
+    Console.WriteLine($"Found {users.Value.Count} active users");
 }
 ```
 
-**Proposed Implementation Steps:**
-1. Create `Migrations` folder structure in project
-2. Convert existing schema scripts to versioned migration files
-3. Initialize migration history tracking table
-4. Implement comprehensive rollback scenario testing
+**DataProvider Implementation Steps:**
+1. Install DataProvider NuGet packages for your database platform
+2. Create `DataProvider.json` configuration file
+3. Convert existing SQL to .sql files in your project
+4. Configure code generation and build to generate extension methods
+5. Replace manual ADO.NET calls with generated methods
 
-##### 1.2 Proposed Connection Pooling Enhancement
+#### Phase 2: Enhanced Features Implementation
+
+##### 2.1 Template Customization Implementation
 ```csharp
-// Current State: Manual connection management
-using var connection = new SqlConnection(connectionString);
-await connection.OpenAsync();
-// Use connection
-// Connection disposed, no reuse potential
+// Current State: Hardcoded generated methods with no customization
+// Generated code can't include logging, tracing, or custom patterns
 
-// Proposed Enhancement: Intelligent connection pooling
-var pool = IConnectionPool.Create(connectionString, new ConnectionPoolConfig
+// Enhanced Feature: User-defined template customization
+// DataProvider.json configuration
 {
-    MinPoolSize = 5,
-    MaxPoolSize = 20,
-    HealthCheckInterval = TimeSpan.FromMinutes(2)
-});
+  "connectionString": "...",
+  "templateConfig": {
+    "methodTemplate": "Templates/LoggingTemplate.cs",
+    "loggerInterface": "Microsoft.Extensions.Logging.ILogger"
+  },
+  "queries": [...]
+}
 
-using var connection = await pool.GetConnectionAsync();
-// Proposed: Connection automatically returned to pool for optimal reuse
-```
-
-**Proposed Implementation Steps:**
-1. Replace direct connection creation with strategic pool usage
-2. Configure pool settings based on application load analysis
-3. Implement comprehensive pool statistics monitoring
-4. Design graceful shutdown procedures for connection disposal
-
-#### Phase 2: Proposed Observability Enhancement
-
-##### 2.1 Proposed Distributed Tracing Implementation
-```csharp
-// Current State: Limited visibility into database operations
-// Basic logging, no correlation, difficult debugging challenges
-
-// Proposed Enhancement: Comprehensive distributed tracing
-var tracing = IDbTracing.CreateConsoleTracing(new TracingConfig
-{
-    SampleRate = 0.1, // Sample 10% for production efficiency
-    MinimumDuration = TimeSpan.FromMilliseconds(100),
-    SanitizeParameters = true
-});
-
-// Proposed: Automatic tracing for all database operations
-var users = await connection.QueryAsync<User>(
-    "SELECT * FROM Users WHERE Active = @active",
-    new { active = true },
-    tracing: tracing);
+// Custom template generates code with your preferred patterns
+var users = await connection.GetUsersAsync(active: true, logger: _logger);
+// Generated method now includes your custom logging, tracing, etc.
 ```
 
 **Migration Steps:**
-1. Add tracing to high-traffic operations first
-2. Configure sampling rates for production
-3. Integrate with existing monitoring systems
-4. Train team on trace analysis
+1. Create custom templates for your preferred logging/tracing frameworks
+2. Configure template settings in DataProvider.json
+3. Rebuild to generate customized extension methods
+4. Update calling code to use new template-generated parameters
 
 ##### 2.2 Middleware Pipeline Implementation
 ```csharp
@@ -165,43 +138,43 @@ var activeProfiles = await documentProvider.Query()
 
 ## 🔄 Step-by-Step Migration Process
 
-### Step 1: Project Setup (1 day)
+### Step 1: DataProvider Project Setup (1 day)
 
 #### Add NuGet Packages
 ```xml
-<PackageReference Include="DataProvider" Version="2.0.0" />
-<PackageReference Include="DataProvider.SQLite" Version="2.0.0" />
-<PackageReference Include="DataProvider.SqlServer" Version="2.0.0" />
+<PackageReference Include="DataProvider.SQLite" Version="*" />
+<!-- OR -->
+<PackageReference Include="DataProvider.SqlServer" Version="*" />
 ```
 
-#### Update Configuration
-```csharp
-// appsettings.json
+#### Create DataProvider Configuration
+```json
+// DataProvider.json
 {
-  "DataProvider": {
-    "ConnectionPooling": {
-      "MinPoolSize": 5,
-      "MaxPoolSize": 20,
-      "HealthCheckInterval": "00:02:00"
-    },
-    "Tracing": {
-      "SampleRate": 0.1,
-      "MinimumDuration": "00:00:00.100"
-    },
-    "Middleware": {
-      "EnableLogging": true,
-      "EnablePerformanceMonitoring": true,
-      "EnableRetry": true
+  "connectionString": "Data Source=mydatabase.db",
+  "queries": [
+    {
+      "name": "GetUsers",
+      "sqlFile": "GetUsers.sql"
     }
-  }
+  ],
+  "tables": [
+    {
+      "schema": "main",
+      "name": "Users",
+      "generateInsert": true,
+      "generateUpdate": true,
+      "generateDelete": true
+    }
+  ]
 }
 ```
 
-### Step 2: Infrastructure Migration (2-3 days)
+### Step 2: Code Migration to DataProvider (2-3 days)
 
-#### 2.1 Connection Management Migration
+#### 2.1 Converting Manual ADO.NET to Generated Extensions
 ```csharp
-// Before: Direct connection usage
+// Before: Manual ADO.NET usage
 public class UserRepository
 {
     private readonly string _connectionString;
@@ -215,26 +188,39 @@ public class UserRepository
     {
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
-        // Query logic
+        
+        using var command = new SqlCommand("SELECT * FROM Users WHERE Active = @active", connection);
+        command.Parameters.AddWithValue("@active", true);
+        
+        var users = new List<User>();
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            users.Add(new User 
+            { 
+                Id = reader.GetInt32("Id"),
+                Name = reader.GetString("Name"),
+                Email = reader.GetString("Email") 
+            });
+        }
+        return users;
     }
 }
 
-// After: Connection pool integration
+// After: DataProvider generated extensions
 public class UserRepository
 {
-    private readonly IConnectionPool _connectionPool;
+    private readonly string _connectionString;
     
-    public UserRepository(IConnectionPool connectionPool)
+    public UserRepository(string connectionString)
     {
-        _connectionPool = connectionPool;
+        _connectionString = connectionString;
     }
     
     public async Task<Result<IReadOnlyList<User>, SqlError>> GetUsersAsync()
     {
-        using var connection = await _connectionPool.GetConnectionAsync();
-        return await connection.GetRecords<User>(
-            new SqlStatement("SELECT * FROM Users WHERE Active = @active",
-                new SqlParameter("@active", true)));
+        using var connection = new SqlConnection(_connectionString);
+        return await connection.GetUsersAsync(active: true); // Generated method
     }
 }
 ```
@@ -342,113 +328,126 @@ public class UserRepository : IUserRepository
 
 ### Step 4: Advanced Features (3-7 days)
 
-#### 4.1 NoSQL Integration for Document Storage
+#### 4.1 LQL NoSQL Integration for Document Storage
+```lql
+-- GetActiveUserProfiles.lql (transpiles to MongoDB/Cosmos DB)
+user_profiles
+|> filter(department = @department and age >= @minAge and active = true)
+|> select(userId, name, department, age, lastActivityDate, skills)
+|> order_by(lastActivityDate desc)
+|> limit(@maxResults)
+```
+
 ```csharp
-// User profiles as documents
+// Generated extension method usage
 public class UserProfileService
 {
-    private readonly INoSqlProvider<UserProfile> _profileProvider;
+    private readonly IMongoCollection<UserProfile> _profileCollection;
     
-    public UserProfileService(INoSqlProvider<UserProfile> profileProvider)
+    public UserProfileService(IMongoCollection<UserProfile> profileCollection)
     {
-        _profileProvider = profileProvider;
-    }
-    
-    public async Task<Result<UserProfile?, SqlError>> GetUserProfileAsync(string userId)
-    {
-        return await _profileProvider.FindByIdAsync(userId);
+        _profileCollection = profileCollection;
     }
     
     public async Task<Result<IReadOnlyList<UserProfile>, SqlError>> SearchProfilesAsync(
-        string department, int minAge)
+        string department, int minAge, int maxResults = 50)
     {
-        return await _profileProvider.Query()
-            .Where(p => p.Department == department)
-            .Where(p => p.Age >= minAge)
-            .OrderByDescending(p => p.LastActivityDate)
-            .ToListAsync();
+        // Generated method from GetActiveUserProfiles.lql
+        return await _profileCollection.GetActiveUserProfilesAsync(
+            department: department, 
+            minAge: minAge, 
+            maxResults: maxResults);
     }
 }
 ```
 
 #### 4.2 Complex Query Migration to LQL
-```csharp
-// Before: Complex SQL with multiple joins
-var sql = @"
-SELECT u.Id, u.Name, u.Email, d.DepartmentName, p.ProjectName
-FROM Users u
-INNER JOIN Departments d ON u.DepartmentId = d.Id
-LEFT JOIN UserProjects up ON u.Id = up.UserId
-LEFT JOIN Projects p ON up.ProjectId = p.Id
-WHERE u.Active = 1 AND d.Active = 1
-ORDER BY u.Name";
+```lql
+-- GetUserProjectData.lql (works for both SQL and NoSQL targets)
+Users
+|> filter(Active = true)
+|> join(Departments, on = Users.DepartmentId = Departments.Id)
+|> filter(Departments.Active = true)
+|> join(UserProjects, on = Users.Id = UserProjects.UserId, type = left)
+|> join(Projects, on = UserProjects.ProjectId = Projects.Id, type = left)
+|> select(
+    Users.Id,
+    Users.Name, 
+    Users.Email,
+    Departments.DepartmentName,
+    Projects.ProjectName
+)
+|> order_by(Users.Name)
+```
 
-// After: LQL functional pipeline
-var userProjectData = await connection.ExecuteLqlAsync("""
-    Users
-    | filter Active == true
-    | join Departments on DepartmentId equals Id where Active == true
-    | join UserProjects on Id equals UserId into userProjects
-    | join Projects on userProjects.ProjectId equals Id into projects
-    | select { 
-        Id, Name, Email, 
-        DepartmentName: Departments.DepartmentName,
-        ProjectName: projects.ProjectName 
-    }
-    | orderby Name
-    """);
+```csharp
+// Generated extension method usage - same LQL file works for both!
+// For SQL databases
+var sqlResults = await sqlConnection.GetUserProjectDataAsync();
+
+// For document databases (if data is denormalized)
+var mongoResults = await mongoCollection.GetUserProjectDataAsync();
 ```
 
 ---
 
-## 🚨 Common Migration Challenges & Solutions
+## 🚨 Common DataProvider Adoption Challenges & Solutions
 
-### Challenge 1: Performance Impact During Migration
+### Challenge 1: Build-Time Database Connection Requirements
 
-**Problem**: Concern about performance impact of new patterns
+**Problem**: DataProvider requires database connection at compile time for schema inspection
 
-**Solution**: Gradual adoption with monitoring
+**Solution**: Set up development database and connection string
+```json
+// DataProvider.json - ensure valid connection at build time
+{
+  "connectionString": "Data Source=dev_database.db",
+  "queries": [...],
+  "tables": [...]
+}
+```
+
+**Alternative**: Use separate build-time and runtime connection strings
 ```csharp
-// Start with connection pooling for immediate performance gains
-var pool = IConnectionPool.Create(connectionString, ConnectionPoolConfig.HighPerformance);
-
-// Monitor performance improvements
-var metrics = new InMemoryPerformanceMetrics();
-var pipeline = MiddlewareExtensions.CreatePipeline()
-    .UsePerformanceMonitoring(metrics)
-    .Build();
-
-// Compare before/after metrics
-metrics.PrintSummary(); // Shows performance improvements
+// Use environment-specific connection strings
+var runtimeConnectionString = Configuration.GetConnectionString("Production");
+using var connection = new SqlConnection(runtimeConnectionString);
+// Generated methods work with any valid connection
+var result = await connection.GetUsersAsync();
 ```
 
 ### Challenge 2: Large Codebase Migration
 
 **Problem**: Too many database operations to migrate at once
 
-**Solution**: Interface-based incremental migration
+**Solution**: Gradual migration with coexistence
 ```csharp
-// Create adapter interface
-public interface IDataAccess
+// Create hybrid data access that supports both patterns
+public class DataAccessService
 {
-    Task<Result<IReadOnlyList<T>, SqlError>> QueryAsync<T>(string sql, object? parameters = null);
-    Task<Result<int, SqlError>> ExecuteAsync(string sql, object? parameters = null);
+    private readonly string _connectionString;
+    
+    public DataAccessService(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+    
+    // Legacy method (keep existing)
+    public async Task<List<User>> GetUsersLegacyAsync()
+    {
+        // Existing ADO.NET implementation
+    }
+    
+    // New DataProvider method (add gradually)
+    public async Task<Result<IReadOnlyList<User>, SqlError>> GetUsersAsync()
+    {
+        using var connection = new SqlConnection(_connectionString);
+        return await connection.GetUsersAsync(); // Generated method
+    }
 }
 
-// Legacy implementation
-public class LegacyDataAccess : IDataAccess
-{
-    // Existing ADO.NET implementation
-}
-
-// New implementation
-public class ModernDataAccess : IDataAccess
-{
-    // DataProvider with middleware pipeline
-}
-
-// Gradual replacement through dependency injection
-services.AddScoped<IDataAccess, ModernDataAccess>(); // Switch when ready
+// Gradually migrate callers from Legacy to new methods
+// services.AddScoped<DataAccessService>();
 ```
 
 ### Challenge 3: Team Learning Curve
@@ -489,102 +488,84 @@ public static async Task<Result<List<T>, string>> QueryResultAsync<T>(this IDbCo
 }
 ```
 
-### Challenge 4: Legacy Database Schema
+### Challenge 4: Schema Changes and Regeneration
 
-**Problem**: Existing schema not optimized for new patterns
+**Problem**: Database schema changes require regenerating DataProvider code
 
-**Solution**: Gradual schema evolution with migrations
+**Solution**: Automated regeneration workflow
 ```csharp
-// Migration 1: Add new columns for enhanced features
-public class Migration_2_0_AddAuditColumns : IMigration
+// Set up build process to regenerate when schema changes
+// 1. Update your database schema (using your existing migration tools)
+// 2. DataProvider automatically detects changes at build time
+// 3. Compilation fails if generated code is out of sync with database
+
+// Example: After adding a new column to Users table
+public async Task<Result<IReadOnlyList<User>, SqlError>> GetUsersWithNewColumnAsync()
 {
-    public string Version => "2.0.1";
-    public string Description => "Add audit columns for enhanced tracking";
-    
-    public string UpSql => @"
-        ALTER TABLE Users ADD CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE();
-        ALTER TABLE Users ADD UpdatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE();
-        ALTER TABLE Users ADD Version ROWVERSION;
-    ";
-    
-    public string DownSql => @"
-        ALTER TABLE Users DROP COLUMN Version;
-        ALTER TABLE Users DROP COLUMN UpdatedAt;
-        ALTER TABLE Users DROP COLUMN CreatedAt;
-    ";
+    using var connection = new SqlConnection(_connectionString);
+    // This will automatically include the new column after rebuild
+    return await connection.GetUsersAsync();
 }
 
-// Migration 2: Add indexes for performance
-public class Migration_2_0_AddPerformanceIndexes : IMigration
-{
-    public string Version => "2.0.2";
-    public string Description => "Add indexes for common query patterns";
-    
-    public string UpSql => @"
-        CREATE INDEX IX_Users_Department_Active ON Users(Department, Active);
-        CREATE INDEX IX_Users_LastLoginDate ON Users(LastLoginDate) WHERE Active = 1;
-    ";
-    
-    public string DownSql => @"
-        DROP INDEX IX_Users_LastLoginDate ON Users;
-        DROP INDEX IX_Users_Department_Active ON Users;
-    ";
-}
+// Use your existing schema management approach
+// - Entity Framework migrations
+// - Flyway/Liquibase
+// - Manual SQL scripts
+// - Database deployment tools
 ```
 
 ---
 
-## ✅ Migration Checklist
+## ✅ DataProvider Adoption Checklist
 
-### Pre-Migration (Planning Phase)
+### Pre-Adoption (Planning Phase)
 - [ ] Analyze current database access patterns
-- [ ] Identify high-impact operations for initial migration
-- [ ] Set up development environment with new features
-- [ ] Train team on functional programming patterns
-- [ ] Create migration timeline and milestones
+- [ ] Identify SQL queries to convert to .sql files
+- [ ] Set up development database for build-time schema inspection
+- [ ] Train team on functional programming patterns and Result<T>
+- [ ] Create adoption timeline and milestones
 
-### Core Migration (Implementation Phase)
-- [ ] Set up connection pooling infrastructure
-- [ ] Implement migration system for schema management
-- [ ] Add basic middleware pipeline (logging, performance)
-- [ ] Migrate high-traffic operations first
+### Core Adoption (Implementation Phase)
+- [ ] Install DataProvider NuGet packages
+- [ ] Create DataProvider.json configuration
+- [ ] Convert first set of SQL queries to .sql files
+- [ ] Generate and test extension methods
 - [ ] Update error handling to Result<T> pattern
 
-### Advanced Migration (Enhancement Phase)
-- [ ] Add comprehensive middleware stack
-- [ ] Implement distributed tracing
-- [ ] Migrate appropriate operations to NoSQL patterns
+### Enhanced Features (Extension Phase)
+- [ ] Create custom templates for logging/tracing integration
+- [ ] Add middleware pipeline (logging, performance, retry)
 - [ ] Convert complex queries to LQL where beneficial
 - [ ] Set up production monitoring and alerting
 
-### Post-Migration (Optimization Phase)
-- [ ] Monitor performance improvements
-- [ ] Optimize connection pool settings
-- [ ] Fine-tune middleware configuration
-- [ ] Review and optimize query patterns
-- [ ] Document lessons learned and best practices
+### Post-Adoption (Optimization Phase)
+- [ ] Monitor code generation build performance
+- [ ] Optimize DataProvider configuration
+- [ ] Review and optimize generated query patterns
+- [ ] Train team on advanced DataProvider features
+- [ ] Document best practices and lessons learned
 
 ---
 
-## 📊 Migration Success Metrics
+## 📊 DataProvider Adoption Success Metrics
 
 ### Performance Metrics
-- **Connection acquisition time**: Should improve by 3-5x with pooling
-- **Query response time**: Monitor for improvements with optimization
-- **Error rates**: Should decrease with middleware retry logic
-- **Resource utilization**: Monitor CPU and memory usage patterns
+- **Build time impact**: Monitor code generation impact on build duration
+- **Query execution time**: Baseline performance vs. manual ADO.NET
+- **Template processing**: Measure template interpolation performance during builds
+- **Memory allocation**: Reduction through Result<T> patterns vs exceptions
 
 ### Quality Metrics
-- **Code maintainability**: Measure reduction in exception handling code
-- **Test coverage**: Functional patterns should improve testability
-- **Bug reports**: Should decrease with compile-time safety
-- **Development velocity**: Should improve after initial learning curve
+- **Code maintainability**: Reduction in manual SQL string concatenation
+- **Compile-time safety**: Elimination of runtime SQL syntax errors
+- **Test coverage**: Improved testability with generated extension methods
+- **Bug reports**: Reduction in data access related bugs
 
-### Operational Metrics
-- **Deployment success rate**: Should improve with automated migrations
-- **System reliability**: Monitor uptime improvements with circuit breakers
-- **Observability**: Measure improvement in debugging and issue resolution
-- **Team satisfaction**: Survey developer experience improvements
+### Developer Experience Metrics
+- **Code generation reliability**: Success rate of build-time generation
+- **IntelliSense quality**: Improved autocomplete with strongly-typed methods
+- **Debugging experience**: Better error messages with Result<T> patterns
+- **Team satisfaction**: Survey developer experience with DataProvider adoption
 
 ---
 
@@ -610,8 +591,8 @@ public class Migration_2_0_AddPerformanceIndexes : IMigration
 
 ---
 
-*This migration guide provides a comprehensive pathway from traditional database access patterns to the enhanced DataProvider ecosystem. Follow the phased approach for a smooth transition with minimal risk and maximum benefit.*
+*This adoption guide provides a comprehensive pathway from traditional database access patterns to DataProvider's compile-time safe code generation approach. Follow the phased approach for a smooth transition with immediate benefits.*
 
-**Migration Complexity**: Low to Moderate  
-**Estimated Timeline**: 2-6 weeks depending on codebase size  
-**Support Level**: Comprehensive documentation and community support available
+**Adoption Complexity**: Low to Moderate  
+**Estimated Timeline**: 1-4 weeks depending on codebase size  
+**Support Level**: Comprehensive documentation and examples available
