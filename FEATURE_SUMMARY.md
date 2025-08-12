@@ -18,12 +18,6 @@ This document presents a comprehensive strategic proposal for enhancing the Data
 
 **Total Proposed Development**: ~5,200 lines of enterprise-grade code across 3 strategic enhancement areas
 
-> **Note**: Connection pooling was removed from this proposal as ADO.NET already provides automatic, optimized connection pooling through connection string configuration. DataProvider works with standard `IDbConnection` instances and leverages existing ADO.NET infrastructure.
-
-> **Note**: Distributed tracing was replaced with Template Customization as the team lead correctly identified that hardcoded tracing would tie DataProvider to specific frameworks. Template customization allows users to inject any logging, tracing, or monitoring they prefer into the generated code, which is more flexible and architecturally sound.
-
-> **Note**: NoSQL support was redesigned from LINQ-style expressions to LQL-based transpilation. The team lead correctly identified that LINQ expressions contradict DataProvider's core philosophy of using explicit SQL/LQL files instead of runtime query builders (which is why DataProvider exists as an alternative to EF).
-
 ---
 
 ## 🎨 Proposed Feature 1: Template Customization System
