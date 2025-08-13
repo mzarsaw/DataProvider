@@ -2,6 +2,31 @@
 
 This repository contains two complementary projects that work together to provide compile-time safe database access and a functional query language for .NET applications.
 
+## Aims
+
+This project delivers compile-time safe, high-performance data access inspired by [F# Type Providers](https://learn.microsoft.com/en-us/dotnet/fsharp/tutorials/type-providers/) like [SQLProvider](https://fsprojects.github.io/SQLProvider/). It solves the fundamental problems with existing ORMs through two complementary approaches.
+
+### The Problems With Current Popular ORMs
+
+#### Dapper
+Runtime reflection means no compile-time type checking, no nullability guarantees, and potential incompatibility with AOT.
+
+#### Entity Framework
+LINQ expressions can't express complex queries like SQL can. It also gives you poor query optimization control.
+
+### The Solution
+
+DataProvider generates pure C# code at compile time from your SQL queries. There is no reflection. It fully supports AOT and null safety with nullable reference types. It has raw ADO.NET performance. Your queries are type-checked during compilation. This catches errors before deployment, just like EF.
+
+LQL (Lambda Query Language) complements this by providing a functional pipeline syntax that transpiles to native SQL. Instead of archaic procedural SQL (T-SQL, PL/pgSQL), you write queries with lambda expressions and pipeline operators that feel natural to C# developers, and allow for complex business logic in triggers and functions.
+
+LQL enables portable queries across databases while still allowing platform-specific SQL when needed or preferred. You can express triggers, functions, and stored procedures in maintainable, FP style code that transpiles to your database's native procedural SQL, or C# in the case og SQLite.
+
+Together, they provide:
+- Portability of querying and business logic at the database level with a well designed FP style language
+- Generate compile-time safe C# methods from either source
+- Full control over SQL optimization with complete type safety
+
 ## Projects Overview
 
 ### 1. DataProvider
