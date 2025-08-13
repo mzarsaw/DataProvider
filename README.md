@@ -59,10 +59,10 @@ DataProvider generates pure C# code at compile time from your queries. There is 
 
 LQL (Lambda Query Language) complements this by providing a functional pipeline syntax that transpiles to native SQL. Instead of archaic procedural SQL (T-SQL, PL/pgSQL), you write queries with lambda expressions and pipeline operators that feel natural to C# developers, and allow for complex business logic in triggers and functions.
 
-LQL enables portable queries across databases while still allowing platform-specific SQL when needed or preferred. You can express triggers, functions, and stored procedures in maintainable, FP style code that transpiles to your database's native procedural SQL, or C# in the case og SQLite.
+LQL enables portable queries across databases while still allowing platform-specific SQL when needed or preferred. You can express triggers, functions, and stored procedures in maintainable, FP style code that transpiles to your database's native procedural SQL, or C# in the case of SQLite.
 
 Together, they provide:
-- Portability of querying and business logic at the database level with a well designed FP style language
+- Portability of querying and business logic at the database level with a well-designed FP style language
 - Generate compile-time safe C# methods from either source
 - Full control over SQL optimization with complete type safety
 
