@@ -1,7 +1,37 @@
 @inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
 <div class="page">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo" @onclick="NavigateToHome" style="cursor: pointer;">
+                    <img src="lql-icon.png" alt="LQL Logo">
+                    <span class="logo-text">LQL</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="@Navigation.BaseUri" @onclick="NavigateToHome" @onclick:preventDefault="true">Home</a></li>
+                        <li><a href="@(Navigation.BaseUri)playground" @onclick="NavigateToPlayground" @onclick:preventDefault="true">Playground</a></li>
+                        <li><a href="https://github.com/MelbourneDeveloper/DataProvider" target="_blank">GitHub</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
     <main>
         @Body
     </main>
 </div>
+
+@code {
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void NavigateToPlayground()
+    {
+        Navigation.NavigateTo("/playground");
+    }
+}
