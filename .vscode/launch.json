@@ -24,6 +24,20 @@
             "cwd": "${workspaceFolder}/DataProvider/DataProvider.Example",
             "console": "internalConsole",
             "stopAtEntry": false
+        },
+        {
+            "name": "DB Browser",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Lql/Lql.Browser/bin/Debug/net9.0/Lql.Browser.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Lql/Lql.Browser",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
         }
     ]
 }
