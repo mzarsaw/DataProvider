@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Avalonia.Controls;
-using Avalonia.Data;
 using AvaloniaEdit;
 using AvaloniaEdit.TextMate;
 using Lql.Browser.Models;
@@ -48,34 +47,9 @@ public partial class MainWindow : Window
         if (sender is not MainWindowViewModel viewModel)
             return;
 
-        if (e.PropertyName == nameof(MainWindowViewModel.ColumnNames))
-        {
-            UpdateDataGridColumns(viewModel.ColumnNames);
-        }
-        else if (e.PropertyName == nameof(MainWindowViewModel.ActiveTab))
+        if (e.PropertyName == nameof(MainWindowViewModel.ActiveTab))
         {
             UpdateSyntaxHighlighting(viewModel.ActiveTab);
-        }
-    }
-
-    private void UpdateDataGridColumns(
-        System.Collections.ObjectModel.ObservableCollection<string>? columnNames
-    )
-    {
-        if (columnNames == null)
-            return;
-
-        ResultsDataGrid.Columns.Clear();
-
-        foreach (var columnName in columnNames)
-        {
-            var column = new DataGridTextColumn
-            {
-                Header = columnName,
-                Binding = new Binding($"[{columnName}]"),
-                Width = new DataGridLength(100, DataGridLengthUnitType.Pixel),
-            };
-            ResultsDataGrid.Columns.Add(column);
         }
     }
 
@@ -109,9 +83,7 @@ public partial class MainWindow : Window
             var language = registryOptions.GetLanguageByExtension(".sql");
             if (language != null)
             {
-                _textMateInstallation.SetGrammar(
-                    registryOptions.GetScopeByLanguageId(language.Id)
-                );
+                _textMateInstallation.SetGrammar(registryOptions.GetScopeByLanguageId(language.Id));
             }
         }
         catch (Exception ex)

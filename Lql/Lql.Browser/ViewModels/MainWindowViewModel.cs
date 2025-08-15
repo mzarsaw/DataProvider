@@ -14,39 +14,44 @@ namespace Lql.Browser.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     [ObservableProperty]
-    private string _resultsHeader = "FirstName";
-
-    [ObservableProperty]
-    private string _executionTime = "46 ms";
-
-    [ObservableProperty]
-    private string _rowCount = "50 rows";
-
-    [ObservableProperty]
-    private string _connectionStatusText = "Connected";
-
-    [ObservableProperty]
-    private string _connectionStatusColor = "#228B22";
-
-    [ObservableProperty]
-    private string _databasePath = "/path/to/database.db";
-
-    [ObservableProperty]
-    private string _statusMessage = "";
-
-    [ObservableProperty]
-    private ObservableCollection<QueryResultRow>? _queryResults;
-
-    [ObservableProperty]
-    private ObservableCollection<string>? _columnNames;
-
-    [ObservableProperty]
     private FileTab? _activeTab;
+
+    /// <summary>
+    /// ViewModel for the schema panel component
+    /// </summary>
+    public SchemaPanelViewModel SchemaPanelViewModel { get; }
+
+    /// <summary>
+    /// ViewModel for the query editor component
+    /// </summary>
+    public QueryEditorViewModel QueryEditorViewModel { get; }
+
+    /// <summary>
+    /// ViewModel for the results grid component
+    /// </summary>
+    public ResultsGridViewModel ResultsGridViewModel { get; }
+
+    /// <summary>
+    /// ViewModel for the toolbar component
+    /// </summary>
+    public ToolbarViewModel ToolbarViewModel { get; }
+
+    /// <summary>
+    /// ViewModel for the status bar component
+    /// </summary>
+    public StatusBarViewModel StatusBarViewModel { get; }
+
+    /// <summary>
+    /// ViewModel for the file tabs component
+    /// </summary>
+    public FileTabsViewModel FileTabsViewModel { get; }
 
     public ObservableCollection<FileTab> FileTabs { get; } = [];
 
-    public ObservableCollection<string> DatabaseTables { get; } = [];
-    public ObservableCollection<string> DatabaseViews { get; } = [];
+    /// <summary>
+    /// Collection of column names for the current query results
+    /// </summary>
+    public ObservableCollection<string> ColumnNames { get; } = [];
 
     private SqliteConnection? _connection;
     private DataTable? _currentDataTable;
@@ -66,6 +71,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public MainWindowViewModel()
     {
+        SchemaPanelViewModel = new SchemaPanelViewModel();
+        QueryEditorViewModel = new QueryEditorViewModel();
+        ResultsGridViewModel = new ResultsGridViewModel();
+        ToolbarViewModel = new ToolbarViewModel();
+        StatusBarViewModel = new StatusBarViewModel();
+        FileTabsViewModel = new FileTabsViewModel();
+
         ConnectDatabaseCommand = new AsyncRelayCommand(ConnectDatabaseAsync);
         NewFileCommand = new RelayCommand<string>(NewFile);
         OpenFileCommand = new AsyncRelayCommand(OpenFileAsync);
@@ -78,13 +90,38 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         SelectTableCommand = new RelayCommand<string>(SelectTable);
         ExecuteQueryCommand = new AsyncRelayCommand(ExecuteQueryAsync);
 
-        ConnectionStatusText = "Disconnected";
-        ConnectionStatusColor = "#9CA3AF";
-        DatabasePath = "No database selected";
+        SetupComponentCommands();
+        SetupComponentEvents();
+
+        StatusBarViewModel.ConnectionStatusText = "Disconnected";
+        StatusBarViewModel.ConnectionStatus = ConnectionStatus.Disconnected;
+        StatusBarViewModel.DatabasePath = "No database selected";
 
         // Create initial LQL tab
         NewFile("lql");
     }
+
+    /// <summary>
+    /// Sets up command bindings for component view models
+    /// </summary>
+    private void SetupComponentCommands()
+    {
+        ToolbarViewModel.ConnectDatabaseCommand = ConnectDatabaseCommand;
+        ToolbarViewModel.ExecuteQueryCommand = ExecuteQueryCommand;
+        ToolbarViewModel.OpenFileCommand = OpenFileCommand;
+        ToolbarViewModel.SaveFileCommand = SaveFileCommand;
+        ToolbarViewModel.ExportCsvCommand = ExportCsvCommand;
+        ToolbarViewModel.ExportJsonCommand = ExportJsonCommand;
+
+        FileTabsViewModel.SwitchTabCommand = SwitchTabCommand;
+        FileTabsViewModel.CloseTabCommand = CloseTabCommand;
+        FileTabsViewModel.NewFileCommand = NewFileCommand;
+    }
+
+    /// <summary>
+    /// Sets up event handlers for component communication
+    /// </summary>
+    private void SetupComponentEvents() => SchemaPanelViewModel.OnTableSelected = SelectTable;
 
     private async Task ConnectDatabaseAsync()
     {
@@ -113,82 +150,18 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 var files = await topLevel.StorageProvider.OpenFilePickerAsync(dialog);
                 if (files.Count > 0)
                 {
-                    await ConnectToDatabase(files[0].Path.LocalPath);
+                    _connection?.Close();
+                    _connection = await Services.DatabaseConnectionManager.ConnectToDatabaseAsync(
+                        files[0].Path.LocalPath,
+                        SchemaPanelViewModel,
+                        StatusBarViewModel
+                    );
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
-        }
-    }
-
-    private async Task ConnectToDatabase(string databasePath)
-    {
-        try
-        {
-            Console.WriteLine($"=== Connecting to database: {databasePath} ===");
-            _connection?.Close();
-
-            var connectionString = new SqliteConnectionStringBuilder
-            {
-                DataSource = databasePath,
-                Mode = SqliteOpenMode.ReadOnly,
-            }.ToString();
-
-            Console.WriteLine($"Connection string: {connectionString}");
-            _connection = new SqliteConnection(connectionString);
-            await _connection.OpenAsync();
-            Console.WriteLine("Database connection opened successfully");
-
-            DatabasePath = databasePath;
-            ConnectionStatusText = "Connected";
-            ConnectionStatusColor = "#228B22";
-            StatusMessage = "Database connected successfully";
-
-            await LoadDatabaseSchema();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"=== Database connection failed ===");
-            Console.WriteLine($"Exception: {ex}");
-            ConnectionStatusText = "Error";
-            ConnectionStatusColor = "#FF0000";
-            StatusMessage = $"Connection failed: {ex.Message}";
-        }
-    }
-
-    private async Task LoadDatabaseSchema()
-    {
-        if (_connection == null)
-            return;
-
-        try
-        {
-            DatabaseTables.Clear();
-            DatabaseViews.Clear();
-
-            var command = _connection.CreateCommand();
-            command.CommandText =
-                "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name";
-
-            using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                DatabaseTables.Add(reader.GetString(0));
-            }
-
-            command.CommandText =
-                "SELECT name FROM sqlite_master WHERE type = 'view' ORDER BY name";
-            using var viewReader = await command.ExecuteReaderAsync();
-            while (await viewReader.ReadAsync())
-            {
-                DatabaseViews.Add(viewReader.GetString(0));
-            }
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"Error loading schema: {ex.Message}";
+            StatusBarViewModel.StatusMessage = $"Error: {ex.Message}";
         }
     }
 
@@ -244,14 +217,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     }
                     else if (contentResult is Result<string, string>.Failure failure)
                     {
-                        StatusMessage = failure.ErrorValue;
+                        StatusBarViewModel.StatusMessage = failure.ErrorValue;
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error opening file: {ex.Message}";
+            StatusBarViewModel.StatusMessage = $"Error opening file: {ex.Message}";
         }
     }
 
@@ -270,11 +243,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (result is Result<Unit, string>.Success)
         {
             ActiveTab.IsModified = false;
-            StatusMessage = $"Saved {ActiveTab.FileName}";
+            StatusBarViewModel.StatusMessage = $"Saved {ActiveTab.FileName}";
         }
         else if (result is Result<Unit, string>.Failure failure)
         {
-            StatusMessage = failure.ErrorValue;
+            StatusBarViewModel.StatusMessage = failure.ErrorValue;
         }
     }
 
@@ -319,18 +292,18 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     {
                         FileOperations.UpdateFileType(ActiveTab, filePath);
                         ActiveTab.IsModified = false;
-                        StatusMessage = $"Saved {ActiveTab.FileName}";
+                        StatusBarViewModel.StatusMessage = $"Saved {ActiveTab.FileName}";
                     }
                     else if (result is Result<Unit, string>.Failure failure)
                     {
-                        StatusMessage = failure.ErrorValue;
+                        StatusBarViewModel.StatusMessage = failure.ErrorValue;
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error saving file: {ex.Message}";
+            StatusBarViewModel.StatusMessage = $"Error saving file: {ex.Message}";
         }
     }
 
@@ -369,7 +342,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (_currentDataTable == null || _currentDataTable.Rows.Count == 0)
         {
-            StatusMessage = "No data to export";
+            StatusBarViewModel.StatusMessage = "No data to export";
             return;
         }
 
@@ -404,18 +377,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     );
                     if (result is Result<Unit, string>.Success)
                     {
-                        StatusMessage = $"Exported {_currentDataTable.Rows.Count} rows to CSV";
+                        StatusBarViewModel.StatusMessage =
+                            $"Exported {_currentDataTable.Rows.Count} rows to CSV";
                     }
                     else if (result is Result<Unit, string>.Failure failure)
                     {
-                        StatusMessage = failure.ErrorValue;
+                        StatusBarViewModel.StatusMessage = failure.ErrorValue;
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error exporting CSV: {ex.Message}";
+            StatusBarViewModel.StatusMessage = $"Error exporting CSV: {ex.Message}";
         }
     }
 
@@ -423,7 +397,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (_currentDataTable == null || _currentDataTable.Rows.Count == 0)
         {
-            StatusMessage = "No data to export";
+            StatusBarViewModel.StatusMessage = "No data to export";
             return;
         }
 
@@ -458,18 +432,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     );
                     if (result is Result<Unit, string>.Success)
                     {
-                        StatusMessage = $"Exported {_currentDataTable.Rows.Count} rows to JSON";
+                        StatusBarViewModel.StatusMessage =
+                            $"Exported {_currentDataTable.Rows.Count} rows to JSON";
                     }
                     else if (result is Result<Unit, string>.Failure failure)
                     {
-                        StatusMessage = failure.ErrorValue;
+                        StatusBarViewModel.StatusMessage = failure.ErrorValue;
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error exporting JSON: {ex.Message}";
+            StatusBarViewModel.StatusMessage = $"Error exporting JSON: {ex.Message}";
         }
     }
 
@@ -482,7 +457,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         var newTab = FileOperations.CreateNewTab("lql", _nextTabNumber);
         newTab.Content = $"{tableName} |> select(*) |> limit(50)";
         newTab.IsModified = true;
-        
+
         FileTabs.Add(newTab);
         FileOperations.SwitchActiveTab(FileTabs, newTab);
         ActiveTab = newTab;
@@ -496,14 +471,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (_connection == null)
         {
             Console.WriteLine("ERROR: No database connection");
-            StatusMessage = "No database connection";
+            StatusBarViewModel.StatusMessage = "No database connection";
             return;
         }
 
         if (ActiveTab == null || string.IsNullOrWhiteSpace(ActiveTab.Content))
         {
             Console.WriteLine("ERROR: No query to execute");
-            StatusMessage = "No query to execute";
+            StatusBarViewModel.StatusMessage = "No query to execute";
             return;
         }
 
@@ -513,7 +488,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            StatusMessage = "Executing query...";
+            StatusBarViewModel.StatusMessage = "Executing query...";
 
             string sqlToExecute;
 
@@ -529,31 +504,33 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     {
                         sqlToExecute = sqlSuccess.Value;
                         Console.WriteLine($"LQL converted to SQL: {sqlToExecute}");
-                        StatusMessage = $"LQL converted to SQL: {sqlToExecute}";
+                        StatusBarViewModel.StatusMessage = $"LQL converted to SQL: {sqlToExecute}";
                     }
                     else if (sqlResult is Result<string, SqlError>.Failure sqlFailure)
                     {
                         Console.WriteLine($"LQL conversion error: {sqlFailure.ErrorValue.Message}");
-                        StatusMessage = $"LQL conversion error: {sqlFailure.ErrorValue.Message}";
+                        StatusBarViewModel.StatusMessage =
+                            $"LQL conversion error: {sqlFailure.ErrorValue.Message}";
                         return;
                     }
                     else
                     {
                         Console.WriteLine("Unknown LQL conversion result");
-                        StatusMessage = "Unknown LQL conversion result";
+                        StatusBarViewModel.StatusMessage = "Unknown LQL conversion result";
                         return;
                     }
                 }
                 else if (lqlStatement is Result<LqlStatement, SqlError>.Failure lqlFailure)
                 {
                     Console.WriteLine($"LQL parse error: {lqlFailure.ErrorValue.Message}");
-                    StatusMessage = $"LQL parse error: {lqlFailure.ErrorValue.Message}";
+                    StatusBarViewModel.StatusMessage =
+                        $"LQL parse error: {lqlFailure.ErrorValue.Message}";
                     return;
                 }
                 else
                 {
                     Console.WriteLine("Unknown LQL parse result");
-                    StatusMessage = "Unknown LQL parse result";
+                    StatusBarViewModel.StatusMessage = "Unknown LQL parse result";
                     return;
                 }
             }
@@ -581,12 +558,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
             // Convert DataTable to QueryResultRow collection
             var results = new ObservableCollection<QueryResultRow>();
-            var columnNames = new ObservableCollection<string>();
 
             // Get column names
+            ColumnNames.Clear();
             foreach (DataColumn column in _currentDataTable.Columns)
             {
-                columnNames.Add(column.ColumnName);
+                ColumnNames.Add(column.ColumnName);
             }
 
             // Convert rows
@@ -604,17 +581,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
             stopwatch.Stop();
 
-            ColumnNames = columnNames;
-            QueryResults = results;
+            ResultsGridViewModel.QueryResults = results;
             Console.WriteLine($"QueryResults set with {results.Count} QueryResultRow items");
 
-            ExecutionTime = $"{stopwatch.ElapsedMilliseconds} ms";
-            RowCount = $"{_currentDataTable.Rows.Count} rows";
-            ResultsHeader =
+            ResultsGridViewModel.ExecutionTime = $"{stopwatch.ElapsedMilliseconds} ms";
+            ResultsGridViewModel.RowCount = $"{_currentDataTable.Rows.Count} rows";
+            ResultsGridViewModel.ResultsHeader =
                 _currentDataTable.Columns.Count > 0
                     ? _currentDataTable.Columns[0].ColumnName
                     : "Results";
-            StatusMessage = $"Query executed successfully in {stopwatch.ElapsedMilliseconds} ms";
+            StatusBarViewModel.StatusMessage =
+                $"Query executed successfully in {stopwatch.ElapsedMilliseconds} ms";
 
             Console.WriteLine("=== ExecuteQueryAsync Completed Successfully ===");
         }
@@ -622,11 +599,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             Console.WriteLine($"=== ERROR in ExecuteQueryAsync ===");
             Console.WriteLine($"Exception: {ex}");
-            StatusMessage = $"Query execution error: {ex.Message}";
-            QueryResults = null;
-            ExecutionTime = "";
-            RowCount = "";
-            ResultsHeader = "Error";
+            StatusBarViewModel.StatusMessage = $"Query execution error: {ex.Message}";
+            ResultsGridViewModel.QueryResults = null;
+            ResultsGridViewModel.ExecutionTime = "";
+            ResultsGridViewModel.RowCount = "";
+            ResultsGridViewModel.ResultsHeader = "Error";
+            ColumnNames.Clear();
         }
     }
 

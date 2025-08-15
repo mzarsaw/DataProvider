@@ -4,16 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:views="using:Lql.Browser.Views"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Lql.Browser.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="DataProvider + LQL"
+        Icon="/Assets/lql-icon.png"
+        Title="LQL DB Browser"
         WindowStartupLocation="CenterScreen"
         MinWidth="800" MinHeight="600"
-        FontFamily="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
-        FontSize="13"
-        Background="#1C1C1C">
+        FontFamily="{StaticResource PrimaryFont}"
+        FontSize="{StaticResource FontSizeMD}"
+        Background="{StaticResource ObsidianBrush}">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -31,7 +32,7 @@
         </Grid.RowDefinitions>
         
         <!-- Top Toolbar -->
-        <Border Grid.Row="0" Background="#1C1C1C" BorderBrush="#36454F" BorderThickness="0,0,0,1" Padding="16,12">
+        <Border Grid.Row="0" Classes="ToolbarBorderStyle">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -39,127 +40,40 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- Left side buttons -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
                     <Button Content="Connect" 
-                            Background="#FF4500" 
-                            Foreground="White" 
-                            FontWeight="SemiBold"
-                            FontSize="13"
-                            Padding="16,8" 
-                            CornerRadius="0" 
-                            BorderThickness="0"
+                            Classes="PrimaryButtonStyle"
                             Command="{Binding ConnectDatabaseCommand}"/>
                     
                     <!-- File Tabs -->
-                    <Border Background="#21262D" CornerRadius="6" Padding="2" Margin="8,0">
-                        <StackPanel Orientation="Horizontal" Spacing="2">
-                            <ItemsControl ItemsSource="{Binding FileTabs}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="2"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Content="{Binding DisplayName}" 
-                                                FontWeight="Medium"
-                                                FontSize="13"
-                                                Padding="16,8" 
-                                                CornerRadius="0" 
-                                                BorderThickness="0"
-                                                Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).SwitchTabCommand}"
-                                                CommandParameter="{Binding}">
-                                            <Button.Styles>
-                                                <Style Selector="Button">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Foreground" Value="#8B949E"/>
-                                                </Style>
-                                            </Button.Styles>
-                                            <Button.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Close" 
-                                                              Command="{Binding $parent[ContextMenu].((vm:MainWindowViewModel)DataContext).CloseTabCommand}"
-                                                              CommandParameter="{Binding}"/>
-                                                </ContextMenu>
-                                            </Button.ContextMenu>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            
-                            <Button Content="+" 
-                                    Background="Transparent" 
-                                    Foreground="#8B949E" 
-                                    FontWeight="Medium"
-                                    FontSize="16"
-                                    Padding="8" 
-                                    CornerRadius="0" 
-                                    BorderThickness="0"
-                                    Command="{Binding NewFileCommand}"
-                                    CommandParameter="lql"/>
-                        </StackPanel>
-                    </Border>
+                    <views:FileTabs DataContext="{Binding}"/>
                     
                     <Button Content="Run" 
-                            Background="#FF4500" 
-                            Foreground="White" 
-                            FontWeight="SemiBold"
-                            FontSize="13"
-                            Padding="20,8" 
-                            CornerRadius="0" 
-                            BorderThickness="0"
-                            Margin="16,0,0,0"
+                            Classes="PrimaryButtonStyle"
+                            Margin="8,0,0,0"
                             Command="{Binding ExecuteQueryCommand}"/>
                 </StackPanel>
                 
                 <!-- Right side buttons and logo -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                     <Button Content="Open" 
-                            Background="Transparent" 
-                            Foreground="#8B949E" 
-                            BorderBrush="#8B949E" 
-                            BorderThickness="1" 
-                            FontWeight="Medium"
-                            FontSize="13"
-                            Padding="12,8" 
-                            CornerRadius="0" 
+                            Classes="SecondaryButtonStyle"
                             Command="{Binding OpenFileCommand}"/>
                     <Button Content="Save" 
-                            Background="Transparent" 
-                            Foreground="#8B949E" 
-                            BorderBrush="#8B949E" 
-                            BorderThickness="1" 
-                            FontWeight="Medium"
-                            FontSize="13"
-                            Padding="12,8" 
-                            CornerRadius="0" 
+                            Classes="SecondaryButtonStyle"
                             Command="{Binding SaveFileCommand}"/>
                     <Button Content="CSV" 
-                            Background="Transparent" 
-                            Foreground="#228B22" 
-                            BorderBrush="#228B22" 
-                            BorderThickness="1" 
-                            FontWeight="Medium"
-                            FontSize="13"
-                            Padding="12,8" 
-                            CornerRadius="0" 
+                            Classes="SecondaryButtonStyle Success"
                             Command="{Binding ExportCsvCommand}"/>
                     <Button Content="JSON" 
-                            Background="Transparent" 
-                            Foreground="#228B22" 
-                            BorderBrush="#228B22" 
-                            BorderThickness="1" 
-                            FontWeight="Medium"
-                            FontSize="13"
-                            Padding="12,8" 
-                            CornerRadius="0" 
+                            Classes="SecondaryButtonStyle Success"
                             Command="{Binding ExportJsonCommand}"/>
                     
                     <!-- LQL Logo -->
                     <Image Source="/Assets/lql-icon.png" 
-                           Width="24" 
-                           Height="24" 
-                           Margin="12,0,0,0"/>
+                           Width="20" 
+                           Height="20" 
+                           Margin="8,0,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -173,130 +87,10 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left Sidebar -->
-            <Border Grid.Column="0" Background="#0A0E14" BorderBrush="#21262D" BorderThickness="0,0,1,0">
-                <ScrollViewer>
-                    <StackPanel Margin="12,12" Spacing="4">
-                        <!-- Tables Section -->
-                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,12" VerticalAlignment="Center">
-                            <PathIcon Data="M3,3H21V5H3V3M3,7H21V9H3V7M3,11H21V13H3V11M3,15H21V17H3V15M3,19H21V21H3V19Z" 
-                                      Foreground="#238636" 
-                                      Width="20" 
-                                      Height="20" 
-                                      VerticalAlignment="Center"/>
-                            <TextBlock Text="Tables" 
-                                       Foreground="#E6EDF3" 
-                                       FontWeight="SemiBold" 
-                                       FontSize="14"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <ItemsControl ItemsSource="{Binding DatabaseTables}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Background="Transparent" 
-                                            Foreground="#E6EDF3" 
-                                            HorizontalAlignment="Stretch" 
-                                            HorizontalContentAlignment="Left"
-                                            BorderThickness="0"
-                                            FontSize="13"
-                                            FontWeight="Regular"
-                                            Padding="20,6,8,6"
-                                            Margin="0,1"
-                                            CornerRadius="4"
-                                            Command="{Binding $parent[ItemsControl].((vm:MainWindowViewModel)DataContext).SelectTableCommand}"
-                                            CommandParameter="{Binding}">
-                                        <Button.Styles>
-                                            <Style Selector="Button:pointerover">
-                                                <Setter Property="Background" Value="#21262D"/>
-                                            </Style>
-                                        </Button.Styles>
-                                        <TextBlock Text="{Binding}"/>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <!-- Views Section -->
-                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,20,0,12" VerticalAlignment="Center">
-                            <PathIcon Data="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" 
-                                      Foreground="#238636" 
-                                      Width="20" 
-                                      Height="20" 
-                                      VerticalAlignment="Center"/>
-                            <TextBlock Text="Views" 
-                                       Foreground="#E6EDF3" 
-                                       FontWeight="SemiBold" 
-                                       FontSize="14"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                        <ItemsControl ItemsSource="{Binding DatabaseViews}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Background="Transparent" 
-                                            Foreground="#E6EDF3" 
-                                            HorizontalAlignment="Stretch" 
-                                            HorizontalContentAlignment="Left"
-                                            BorderThickness="0"
-                                            FontSize="13"
-                                            FontWeight="Regular"
-                                            Padding="20,6,8,6"
-                                            Margin="0,1"
-                                            CornerRadius="4">
-                                        <Button.Styles>
-                                            <Style Selector="Button:pointerover">
-                                                <Setter Property="Background" Value="#21262D"/>
-                                            </Style>
-                                        </Button.Styles>
-                                        <TextBlock Text="{Binding}"/>
-                                    </Button>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <!-- Other Sections -->
-                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,20,0,12" VerticalAlignment="Center">
-                            <PathIcon Data="M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z" 
-                                      Foreground="#238636" 
-                                      Width="20" 
-                                      Height="20" 
-                                      VerticalAlignment="Center"/>
-                            <TextBlock Text="Indexes" 
-                                       Foreground="#E6EDF3" 
-                                       FontWeight="SemiBold" 
-                                       FontSize="14"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                        
-                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,20,0,12" VerticalAlignment="Center">
-                            <PathIcon Data="M11,8.9C11,7.29 11.9,5.9 13.2,5.2L12,3.5L10.8,5.2C12.1,5.9 13,7.29 13,8.9V10.5L12,12.5L11,10.5V8.9M13,16A3,3 0 0,1 10,13A3,3 0 0,1 13,10A3,3 0 0,1 16,13A3,3 0 0,1 13,16M14.8,5.2C16.1,5.9 17,7.29 17,8.9V10.5L16,12.5L15,10.5V8.9C15,7.29 15.9,5.9 17.2,5.2L16,3.5L14.8,5.2Z" 
-                                      Foreground="#238636" 
-                                      Width="20" 
-                                      Height="20" 
-                                      VerticalAlignment="Center"/>
-                            <TextBlock Text="Triggers" 
-                                       Foreground="#E6EDF3" 
-                                       FontWeight="SemiBold" 
-                                       FontSize="14"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                        
-                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,20,0,12" VerticalAlignment="Center">
-                            <PathIcon Data="M22.7,19L13.6,9.9C14.5,7.6 14,4.9 12.1,3C10.1,1 7.1,0.6 4.7,1.7L9,6L6,9L1.6,4.7C0.4,7.1 0.9,10.1 2.9,12.1C4.8,14 7.5,14.5 9.8,13.6L18.9,22.7C19.3,23.1 19.9,23.1 20.3,22.7L22.6,20.4C23.1,20 23.1,19.3 22.7,19Z" 
-                                      Foreground="#238636" 
-                                      Width="20" 
-                                      Height="20" 
-                                      VerticalAlignment="Center"/>
-                            <TextBlock Text="Pragmas" 
-                                       Foreground="#E6EDF3" 
-                                       FontWeight="SemiBold" 
-                                       FontSize="14"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
+            <views:SchemaPanel Grid.Column="0" DataContext="{Binding SchemaPanelViewModel}"/>
 
             <!-- Splitter -->
-            <GridSplitter Grid.Column="1" Width="1" Background="#21262D" ResizeDirection="Columns"/>
+            <GridSplitter Grid.Column="1" Classes="VerticalSplitterStyle"/>
 
             <!-- Right Content Area -->
             <Grid Grid.Column="2">
@@ -307,127 +101,18 @@
                 </Grid.RowDefinitions>
 
                 <!-- Query Editor -->
-                <Border Grid.Row="0" Background="#1C1C1C" Margin="12,12,12,6">
-                    <Border Background="#1C1C1C" BorderBrush="#21262D" BorderThickness="1" CornerRadius="0">
-                        <AvaloniaEdit:TextEditor x:Name="QueryEditor"
-                                                 Background="Transparent"
-                                                 Foreground="#E6EDF3"
-                                                 FontFamily="JetBrains Mono, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace"
-                                                 FontSize="14"
-                                                 ShowLineNumbers="True"
-                                                 WordWrap="False">
-                            <AvaloniaEdit:TextEditor.Options>
-                                <AvaloniaEdit:TextEditorOptions ShowSpaces="False" 
-                                                                ShowTabs="False" 
-                                                                ShowEndOfLine="False"
-                                                                HighlightCurrentLine="True"/>
-                            </AvaloniaEdit:TextEditor.Options>
-                        </AvaloniaEdit:TextEditor>
-                    </Border>
-                </Border>
+                <views:QueryEditor Grid.Row="0" DataContext="{Binding}"/>
 
                 <!-- Horizontal Splitter -->
-                <GridSplitter Grid.Row="1" Height="1" Background="#21262D" ResizeDirection="Rows" HorizontalAlignment="Stretch"/>
+                <GridSplitter Grid.Row="1" Classes="HorizontalSplitterStyle"/>
 
                 <!-- Results Area -->
-                <Border Grid.Row="2" Background="#1C1C1C" Margin="12,6,12,12">
-                    <Border Background="#1C1C1C" BorderBrush="#21262D" BorderThickness="1" CornerRadius="0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Results Header -->
-                            <Border Grid.Row="0" BorderBrush="#333" BorderThickness="0,0,0,1" Padding="16,12">
-                                <StackPanel Orientation="Horizontal" Spacing="16">
-                                    <TextBlock Text="{Binding ResultsHeader}" 
-                                               Foreground="#E6EDF3" 
-                                               FontWeight="SemiBold"
-                                               FontSize="12"/>
-                                    <TextBlock Text="{Binding ExecutionTime}" 
-                                               Foreground="#FFA500"
-                                               FontSize="11"/>
-                                    <TextBlock Text="{Binding RowCount}" 
-                                               Foreground="#FFA500"
-                                               FontSize="11"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Results Grid -->
-                            <ScrollViewer Grid.Row="1" Padding="16">
-                                <DataGrid Name="ResultsDataGrid"
-                                          ItemsSource="{Binding QueryResults}"
-                                          AutoGenerateColumns="False"
-                                          Background="Transparent"
-                                          Foreground="#E6EDF3"
-                                          BorderThickness="1"
-                                          BorderBrush="#333"
-                                          GridLinesVisibility="All"
-                                          HeadersVisibility="All"
-                                          IsReadOnly="True"
-                                          CanUserReorderColumns="True"
-                                          CanUserResizeColumns="True"
-                                          CanUserSortColumns="True"
-                                          FontFamily="JetBrains Mono, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace"
-                                          FontSize="12">
-                                    <DataGrid.Styles>
-                                        <Style Selector="DataGrid">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                        </Style>
-                                        <Style Selector="DataGridRow">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                        </Style>
-                                        <Style Selector="DataGridRow:pointerover">
-                                            <Setter Property="Background" Value="#21262D"/>
-                                        </Style>
-                                        <Style Selector="DataGridRow:selected">
-                                            <Setter Property="Background" Value="#1F6FEB20"/>
-                                        </Style>
-                                        <Style Selector="DataGridColumnHeader">
-                                            <Setter Property="Background" Value="#21262D"/>
-                                            <Setter Property="Foreground" Value="#8B949E"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="FontSize" Value="11"/>
-                                            <Setter Property="Padding" Value="8,8"/>
-                                            <Setter Property="BorderBrush" Value="#333"/>
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                        </Style>
-                                        <Style Selector="DataGridCell">
-                                            <Setter Property="BorderBrush" Value="#333"/>
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="Padding" Value="8,6"/>
-                                        </Style>
-                                    </DataGrid.Styles>
-                                </DataGrid>
-                            </ScrollViewer>
-                        </Grid>
-                    </Border>
-                </Border>
+                <views:ResultsGrid Grid.Row="2" DataContext="{Binding ResultsGridViewModel}"/>
             </Grid>
         </Grid>
 
         <!-- Status Bar -->
-        <Border Grid.Row="2" Background="#1C1C1C" BorderBrush="#36454F" BorderThickness="0,1,0,0" Padding="12,8">
-            <StackPanel Orientation="Horizontal" Spacing="16">
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Ellipse Width="6" Height="6" Fill="{Binding ConnectionStatusColor}" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding ConnectionStatusText}" 
-                               Foreground="#E6EDF3"
-                               FontSize="11"
-                               FontWeight="Medium"/>
-                </StackPanel>
-                <TextBlock Text="{Binding DatabasePath}" 
-                           Foreground="#8B949E"
-                           FontSize="11"/>
-                <TextBlock Text="SQLite" 
-                           Foreground="#8B949E"
-                           FontSize="11"/>
-                <TextBlock Text="{Binding StatusMessage}" 
-                           Foreground="#8B949E"
-                           FontSize="11"/>
-            </StackPanel>
-        </Border>
+        <views:StatusBar Grid.Row="2" DataContext="{Binding StatusBarViewModel}"/>
     </Grid>
 
 </Window>
