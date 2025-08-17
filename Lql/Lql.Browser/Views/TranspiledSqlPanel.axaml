@@ -13,12 +13,13 @@
                 BorderThickness="1" CornerRadius="0">
             
             <Grid>
-                <AvaloniaEdit:TextEditor Background="Transparent"
+                <AvaloniaEdit:TextEditor x:Name="SqlEditor"
+                                         Background="Transparent"
                                          Foreground="{StaticResource CodeTextBrush}"
                                          FontFamily="{StaticResource CodeFont}"
                                          Document="{Binding TranspiledSqlDocument}"
                                          IsReadOnly="True"
-                                         ShowLineNumbers="False"
+                                         ShowLineNumbers="True"
                                          WordWrap="True"
                                          IsVisible="{Binding TranspiledSql, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                     <AvaloniaEdit:TextEditor.Options>
