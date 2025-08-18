@@ -21,9 +21,11 @@
         <!-- NEVER USE FLUENT ASSERTIONS - REMOVE!! -->
         <PackageReference Include="Moq" Version="4.20.72" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="../DataProvider/DataProvider.csproj" />
+        <ProjectReference Include="../DataProvider.SQLite/DataProvider.SQLite.csproj" />
         <ProjectReference Include="../../Other/Selecta/Selecta.csproj" />
         <ProjectReference Include="../../Other/Results/Results.csproj" />
         <ProjectReference Include="../../Lql/Lql.SQLite/Lql.SQLite.csproj" />

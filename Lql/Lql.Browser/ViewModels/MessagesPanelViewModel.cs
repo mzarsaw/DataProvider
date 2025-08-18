@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
 using AvaloniaEdit.Document;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Lql.Browser.ViewModels;
 
@@ -31,28 +31,28 @@ public partial class MessagesPanelViewModel : ViewModelBase
     /// Adds an error message to the messages collection
     /// </summary>
     /// <param name="message">The error message to add</param>
-    public void AddError(string message) => 
+    public void AddError(string message) =>
         Messages.Add(new MessageItem(MessageType.Error, message, DateTime.Now));
 
     /// <summary>
     /// Adds an information message to the messages collection
     /// </summary>
     /// <param name="message">The information message to add</param>
-    public void AddInfo(string message) => 
+    public void AddInfo(string message) =>
         Messages.Add(new MessageItem(MessageType.Info, message, DateTime.Now));
 
     /// <summary>
     /// Adds a warning message to the messages collection
     /// </summary>
     /// <param name="message">The warning message to add</param>
-    public void AddWarning(string message) => 
+    public void AddWarning(string message) =>
         Messages.Add(new MessageItem(MessageType.Warning, message, DateTime.Now));
 
     /// <summary>
     /// Adds a success message to the messages collection
     /// </summary>
     /// <param name="message">The success message to add</param>
-    public void AddSuccess(string message) => 
+    public void AddSuccess(string message) =>
         Messages.Add(new MessageItem(MessageType.Success, message, DateTime.Now));
 
     /// <summary>
@@ -74,7 +74,7 @@ public partial class MessagesPanelViewModel : ViewModelBase
     /// <summary>
     /// Clears the transpiled SQL
     /// </summary>
-    public void ClearTranspiledSql() 
+    public void ClearTranspiledSql()
     {
         TranspiledSql = null;
         TranspiledSqlDocument.Text = string.Empty;
@@ -101,19 +101,21 @@ public record MessageItem(MessageType Type, string Message, DateTime Timestamp)
     /// <summary>
     /// Formatted timestamp for display
     /// </summary>
-    public string FormattedTimestamp => Timestamp.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+    public string FormattedTimestamp =>
+        Timestamp.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
 
     /// <summary>
     /// Gets the icon character for the message type
     /// </summary>
-    public string Icon => Type switch
-    {
-        MessageType.Error => "❌",
-        MessageType.Warning => "⚠️",
-        MessageType.Success => "✅",
-        MessageType.Info => "ℹ️",
-        _ => "•"
-    };
+    public string Icon =>
+        Type switch
+        {
+            MessageType.Error => "❌",
+            MessageType.Warning => "⚠️",
+            MessageType.Success => "✅",
+            MessageType.Info => "ℹ️",
+            _ => "•",
+        };
 
     /// <summary>
     /// Gets the CSS class for styling the message type
@@ -129,5 +131,5 @@ public enum MessageType
     Info,
     Success,
     Warning,
-    Error
+    Error,
 }

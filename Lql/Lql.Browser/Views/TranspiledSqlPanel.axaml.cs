@@ -18,7 +18,7 @@ public partial class TranspiledSqlPanel : UserControl
         Loaded += OnLoaded;
     }
 
-    private void OnLoaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => 
+    private void OnLoaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e) =>
         SetupSqlSyntaxHighlighting();
 
     private void SetupSqlSyntaxHighlighting()
@@ -31,10 +31,10 @@ public partial class TranspiledSqlPanel : UserControl
         {
             // Use DarkPlus theme for syntax highlighting
             var registryOptions = new RegistryOptions(ThemeName.DarkPlus);
-            
+
             // Install TextMate on the editor
             _textMateInstallation = editor.InstallTextMate(registryOptions);
-            
+
             // Set SQL grammar
             var language = registryOptions.GetLanguageByExtension(".sql");
             if (language != null && _textMateInstallation != null)
@@ -45,7 +45,9 @@ public partial class TranspiledSqlPanel : UserControl
         catch (Exception ex)
         {
             // Log error but don't crash the application
-            System.Diagnostics.Debug.WriteLine($"Failed to setup SQL syntax highlighting: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine(
+                $"Failed to setup SQL syntax highlighting: {ex.Message}"
+            );
         }
     }
 }
