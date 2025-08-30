@@ -226,7 +226,7 @@ public static class DataAccessGenerator
         sb.AppendLine("    /// </summary>");
         sb.AppendLine(
             CultureInfo.InvariantCulture,
-            $"    public static async Task<Result<long, SqlError>> Insert{table.Name}Async(this {connectionType} connection, {parameterList})"
+            $"    public static async Task<Result<long, SqlError>> Insert{table.Name}Async(this IDbTransaction transaction, {parameterList})"
         );
         sb.AppendLine("    {");
 
@@ -243,9 +243,10 @@ public static class DataAccessGenerator
         sb.AppendLine("        {");
 
         var commandType = connectionType.Replace("Connection", "Command", StringComparison.Ordinal);
+        var transactionType = connectionType.Replace("Connection", "Transaction", StringComparison.Ordinal);
         sb.AppendLine(
             CultureInfo.InvariantCulture,
-            $"            using (var command = new {commandType}(sql, connection))"
+            $"            using (var command = new {commandType}(sql, ({connectionType})transaction.Connection, ({transactionType})transaction))"
         );
         sb.AppendLine("            {");
 
@@ -320,7 +321,7 @@ public static class DataAccessGenerator
         sb.AppendLine("    /// </summary>");
         sb.AppendLine(
             CultureInfo.InvariantCulture,
-            $"    public static async Task<Result<int, SqlError>> Update{table.Name}Async(this {connectionType} connection, {parameterList})"
+            $"    public static async Task<Result<int, SqlError>> Update{table.Name}Async(this IDbTransaction transaction, {parameterList})"
         );
         sb.AppendLine("    {");
 
@@ -340,9 +341,10 @@ public static class DataAccessGenerator
         sb.AppendLine("        {");
 
         var commandType = connectionType.Replace("Connection", "Command", StringComparison.Ordinal);
+        var transactionType = connectionType.Replace("Connection", "Transaction", StringComparison.Ordinal);
         sb.AppendLine(
             CultureInfo.InvariantCulture,
-            $"            using (var command = new {commandType}(sql, connection))"
+            $"            using (var command = new {commandType}(sql, ({connectionType})transaction.Connection, ({transactionType})transaction))"
         );
         sb.AppendLine("            {");
 
