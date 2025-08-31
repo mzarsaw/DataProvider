@@ -36,7 +36,7 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
     public static Result<string, SqlError> GenerateCodeWithMetadata(
         string fileName,
         string sql,
-        SqlStatement statement,
+        SelectStatement statement,
         string connectionString,
         IReadOnlyList<DatabaseColumn> columnMetadata,
         bool hasCustomImplementation,
@@ -96,7 +96,7 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
             className,
             fileName,
             sql,
-            statement.Parameters,
+            statement.Parameters.ToList().AsReadOnly(),
             columnMetadata,
             generationConfig.ConnectionType
         );
@@ -167,56 +167,66 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
     /// <summary>
     /// Gets table metadata using SQLite's native PRAGMA table_info command
     /// </summary>
-    private static Result<DatabaseTable, SqlError> GetTableMetadataFromDatabase(string connectionString, string tableName)
+    private static Result<DatabaseTable, SqlError> GetTableMetadataFromDatabase(
+        string connectionString,
+        string tableName
+    )
     {
         try
         {
             using var connection = new Microsoft.Data.Sqlite.SqliteConnection(connectionString);
             connection.Open();
-            
+
             // Get column information from SQLite's PRAGMA table_info
             var columns = new List<DatabaseColumn>();
             using (var cmd = connection.CreateCommand())
             {
                 cmd.CommandText = $"PRAGMA table_info({tableName})";
                 using var reader = cmd.ExecuteReader();
-                
+
                 while (reader.Read())
                 {
                     var columnName = reader.GetString(1); // name column
-                    var sqliteType = reader.GetString(2); // type column  
+                    var sqliteType = reader.GetString(2); // type column
                     var notNull = reader.GetInt32(3) == 1; // notnull column
                     var isPrimaryKey = reader.GetInt32(5) > 0; // pk column
-                    
+
                     var csharpType = MapSqliteTypeToCSharpType(sqliteType, !notNull);
-                    
-                    columns.Add(new DatabaseColumn
-                    {
-                        Name = columnName,
-                        SqlType = sqliteType,
-                        CSharpType = csharpType,
-                        IsNullable = !notNull,
-                        IsPrimaryKey = isPrimaryKey,
-                        IsIdentity = isPrimaryKey && sqliteType.Contains("INTEGER", StringComparison.OrdinalIgnoreCase),
-                        IsComputed = false
-                    });
+
+                    columns.Add(
+                        new DatabaseColumn
+                        {
+                            Name = columnName,
+                            SqlType = sqliteType,
+                            CSharpType = csharpType,
+                            IsNullable = !notNull,
+                            IsPrimaryKey = isPrimaryKey,
+                            IsIdentity =
+                                isPrimaryKey
+                                && sqliteType.Contains(
+                                    "INTEGER",
+                                    StringComparison.OrdinalIgnoreCase
+                                ),
+                            IsComputed = false,
+                        }
+                    );
                 }
             }
-            
+
             if (columns.Count == 0)
             {
                 return new Result<DatabaseTable, SqlError>.Failure(
                     new SqlError($"Table {tableName} not found or has no columns")
                 );
             }
-            
+
             var table = new DatabaseTable
             {
                 Schema = "main",
                 Name = tableName,
-                Columns = columns.AsReadOnly()
+                Columns = columns.AsReadOnly(),
             };
-            
+
             return new Result<DatabaseTable, SqlError>.Success(table);
         }
         catch (Exception ex)
@@ -226,7 +236,7 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
             );
         }
     }
-    
+
     /// <summary>
     /// Maps SQLite types to C# types
     /// </summary>
@@ -235,26 +245,33 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
         var baseType = sqliteType.ToUpperInvariant() switch
         {
             var t when t.Contains("INT", StringComparison.OrdinalIgnoreCase) => "long",
-            var t when t.Contains("REAL", StringComparison.OrdinalIgnoreCase) || t.Contains("FLOAT", StringComparison.OrdinalIgnoreCase) || t.Contains("DOUBLE", StringComparison.OrdinalIgnoreCase) => "double",
-            var t when t.Contains("DECIMAL", StringComparison.OrdinalIgnoreCase) || t.Contains("NUMERIC", StringComparison.OrdinalIgnoreCase) => "double",
+            var t
+                when t.Contains("REAL", StringComparison.OrdinalIgnoreCase)
+                    || t.Contains("FLOAT", StringComparison.OrdinalIgnoreCase)
+                    || t.Contains("DOUBLE", StringComparison.OrdinalIgnoreCase) => "double",
+            var t
+                when t.Contains("DECIMAL", StringComparison.OrdinalIgnoreCase)
+                    || t.Contains("NUMERIC", StringComparison.OrdinalIgnoreCase) => "double",
             var t when t.Contains("BOOL", StringComparison.OrdinalIgnoreCase) => "bool",
-            var t when t.Contains("DATE", StringComparison.OrdinalIgnoreCase) || t.Contains("TIME", StringComparison.OrdinalIgnoreCase) => "string", // SQLite stores dates as text
+            var t
+                when t.Contains("DATE", StringComparison.OrdinalIgnoreCase)
+                    || t.Contains("TIME", StringComparison.OrdinalIgnoreCase) => "string", // SQLite stores dates as text
             var t when t.Contains("BLOB", StringComparison.OrdinalIgnoreCase) => "byte[]",
-            _ => "string"
+            _ => "string",
         };
-        
+
         if (isNullable && baseType != "string" && baseType != "byte[]")
         {
             return baseType + "?";
         }
-        
+
         return baseType;
     }
 
     private static Result<string, SqlError> GenerateGroupedVersionWithMetadata(
         string fileName,
         string sql,
-        SqlStatement statement,
+        SelectStatement statement,
         IReadOnlyList<DatabaseColumn> columnMetadata,
         GroupingConfig groupingConfig,
         CodeGenerationConfig config
@@ -270,7 +287,7 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
             $"{fileName}Extensions",
             fileName,
             sql,
-            statement.Parameters,
+            statement.Parameters.ToList().AsReadOnly(),
             columnMetadata,
             groupingConfig,
             config.ConnectionType
@@ -315,8 +332,8 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
         var additional = context.AdditionalTextsProvider;
 
         var sqlFiles = additional.Where(at =>
-            at.Path.EndsWith(".sql", StringComparison.OrdinalIgnoreCase) &&
-            !Path.GetFileName(at.Path).Equals("schema.sql", StringComparison.OrdinalIgnoreCase)
+            at.Path.EndsWith(".sql", StringComparison.OrdinalIgnoreCase)
+            && !Path.GetFileName(at.Path).Equals("schema.sql", StringComparison.OrdinalIgnoreCase)
         );
         var schemaFiles = additional.Where(at =>
             Path.GetFileName(at.Path).Equals("schema.sql", StringComparison.OrdinalIgnoreCase)
@@ -445,7 +462,25 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
                 }
 
                 // Parse SQL (attach any unexpected parser errors to the SQL file)
-                var statement = parser.ParseSql(sqlText);
+                var parseResult = parser.ParseSql(sqlText);
+                if (parseResult is Result<SelectStatement, string>.Failure parseFailure)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            new DiagnosticDescriptor(
+                                "DP0002",
+                                "SQL Parse Error",
+                                $"Failed to parse SQL file '{baseName}': {parseFailure.ErrorValue}",
+                                "DataProvider.SQLite",
+                                DiagnosticSeverity.Error,
+                                true
+                            ),
+                            Location.None
+                        )
+                    );
+                    continue;
+                }
+                var statement = ((Result<SelectStatement, string>.Success)parseResult).Value;
 
                 // Discover real column metadata by executing the SQL against the DB
                 var columnsResult = GetColumnMetadataFromSqlAsync(
@@ -621,16 +656,21 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
         if (config.Tables.Count > 0)
         {
             var tableOperationGenerator = new DefaultTableOperationGenerator("SqliteConnection");
-            
+
             foreach (var tableConfigItem in config.Tables)
             {
                 try
                 {
                     // Use SQLite's native schema inspection
-                    var tableMetadataResult = GetTableMetadataFromDatabase(config.ConnectionString, tableConfigItem.Name);
+                    var tableMetadataResult = GetTableMetadataFromDatabase(
+                        config.ConnectionString,
+                        tableConfigItem.Name
+                    );
                     if (tableMetadataResult is not Result<DatabaseTable, SqlError>.Success tableOk)
                     {
-                        var err = (tableMetadataResult as Result<DatabaseTable, SqlError>.Failure)!.ErrorValue;
+                        var err = (
+                            tableMetadataResult as Result<DatabaseTable, SqlError>.Failure
+                        )!.ErrorValue;
                         var tableDiag = Diagnostic.Create(
                             new DiagnosticDescriptor(
                                 "DataProvider007",
@@ -657,11 +697,14 @@ public sealed class SqliteCodeGenerator : IIncrementalGenerator
                         GenerateUpdate = tableConfigItem.GenerateUpdate,
                         GenerateDelete = tableConfigItem.GenerateDelete,
                         ExcludeColumns = tableConfigItem.ExcludeColumns.ToList().AsReadOnly(),
-                        PrimaryKeyColumns = tableConfigItem.PrimaryKeyColumns.ToList().AsReadOnly()
+                        PrimaryKeyColumns = tableConfigItem.PrimaryKeyColumns.ToList().AsReadOnly(),
                     };
 
                     // Generate table operations
-                    var operationsResult = tableOperationGenerator.GenerateTableOperations(tableOk.Value, tableConfig);
+                    var operationsResult = tableOperationGenerator.GenerateTableOperations(
+                        tableOk.Value,
+                        tableConfig
+                    );
                     if (operationsResult is Result<string, SqlError>.Success operationsSuccess)
                     {
                         context.AddSource(

@@ -5,6 +5,7 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Example.ruleset</CodeAnalysisRuleSet>
         <WarningsNotAsErrors>CA1303</WarningsNotAsErrors>
+        <NoWarn>CA1303</NoWarn>
         <EnableLqlTranspile>true</EnableLqlTranspile>
     </PropertyGroup>
     <ItemGroup>

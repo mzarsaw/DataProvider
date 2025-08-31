@@ -2,12 +2,14 @@ using DataProvider.CodeGeneration;
 using Microsoft.Data.Sqlite;
 using Results;
 using Selecta;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DataProvider.SQLite.CodeGeneration;
 
 /// <summary>
 /// SQLite-specific database effects implementation
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class SqliteDatabaseEffects : IDatabaseEffects
 {
     /// <summary>

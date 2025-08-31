@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using DataProvider.CodeGeneration;
 using DataProvider.SQLite;
 using Results;
@@ -47,9 +48,9 @@ public class CustomCodeGenerationTests
         },
     };
 
-    private static readonly SqlStatement TestStatement = new()
+    private static readonly SelectStatement TestStatement = new()
     {
-        Parameters = new List<ParameterInfo> { new("userId", "INTEGER") }.AsReadOnly(),
+        Parameters = new[] { new ParameterInfo("userId", "INTEGER") }.ToFrozenSet(),
     };
 
     private static Task<Result<IReadOnlyList<DatabaseColumn>, SqlError>> MockGetColumnMetadata(

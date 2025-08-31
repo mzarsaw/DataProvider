@@ -243,7 +243,11 @@ public static class DataAccessGenerator
         sb.AppendLine("        {");
 
         var commandType = connectionType.Replace("Connection", "Command", StringComparison.Ordinal);
-        var transactionType = connectionType.Replace("Connection", "Transaction", StringComparison.Ordinal);
+        var transactionType = connectionType.Replace(
+            "Connection",
+            "Transaction",
+            StringComparison.Ordinal
+        );
         sb.AppendLine(
             CultureInfo.InvariantCulture,
             $"            using (var command = new {commandType}(sql, ({connectionType})transaction.Connection, ({transactionType})transaction))"
@@ -253,15 +257,30 @@ public static class DataAccessGenerator
         // Add parameters
         foreach (var column in insertableColumns)
         {
-            sb.AppendLine(
-                CultureInfo.InvariantCulture,
-                $"                command.Parameters.AddWithValue(\"@{column.Name}\", {column.Name.ToLowerInvariant()});"
-            );
+            var paramName = column.Name.ToLowerInvariant();
+            if (column.IsNullable)
+            {
+                sb.AppendLine(
+                    CultureInfo.InvariantCulture,
+                    $"                command.Parameters.AddWithValue(\"@{column.Name}\", {paramName} ?? (object)DBNull.Value);"
+                );
+            }
+            else
+            {
+                sb.AppendLine(
+                    CultureInfo.InvariantCulture,
+                    $"                command.Parameters.AddWithValue(\"@{column.Name}\", {paramName});"
+                );
+            }
         }
 
         sb.AppendLine();
         sb.AppendLine(
             "                var result = await command.ExecuteScalarAsync().ConfigureAwait(false);"
+        );
+        sb.AppendLine("                if (result == null || result == DBNull.Value)");
+        sb.AppendLine(
+            "                    return new Result<long, SqlError>.Failure(new SqlError(\"Insert failed: no ID returned\"));"
         );
         sb.AppendLine(
             "                var newId = Convert.ToInt64(result, CultureInfo.InvariantCulture);"
@@ -341,7 +360,11 @@ public static class DataAccessGenerator
         sb.AppendLine("        {");
 
         var commandType = connectionType.Replace("Connection", "Command", StringComparison.Ordinal);
-        var transactionType = connectionType.Replace("Connection", "Transaction", StringComparison.Ordinal);
+        var transactionType = connectionType.Replace(
+            "Connection",
+            "Transaction",
+            StringComparison.Ordinal
+        );
         sb.AppendLine(
             CultureInfo.InvariantCulture,
             $"            using (var command = new {commandType}(sql, ({connectionType})transaction.Connection, ({transactionType})transaction))"

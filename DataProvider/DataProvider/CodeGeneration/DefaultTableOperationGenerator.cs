@@ -49,7 +49,10 @@ public class DefaultTableOperationGenerator : ITableOperationGenerator
 
         var className = string.Create(CultureInfo.InvariantCulture, $"{table.Name}Extensions");
         sb.AppendLine("    /// <summary>");
-        sb.AppendLine(CultureInfo.InvariantCulture, $"    /// Extension methods for table operations on {table.Name}");
+        sb.AppendLine(
+            CultureInfo.InvariantCulture,
+            $"    /// Extension methods for table operations on {table.Name}"
+        );
         sb.AppendLine("    /// </summary>");
         sb.AppendLine(CultureInfo.InvariantCulture, $"    public static partial class {className}");
         sb.AppendLine("    {");

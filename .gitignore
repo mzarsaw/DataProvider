@@ -404,3 +404,6 @@ invoices.db
 *.bak
 *.swp
 *~
+coverage_report/
+
+final_coverage_report/
