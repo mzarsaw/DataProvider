@@ -245,7 +245,12 @@ Both DataProvider and LQL are designed for maximum performance:
 
 ## Contributing
 
+Please understand that the main structure of the projects is not stable. It will change a lot. Focus on bug fixes or small functionality additions that are obvious. Sweeping changes are likely to get stuck and may not make it into the codebase before it changes significantly. 
+
+The best way to check if your ideas match the project goals is to log an issue or start a discussion describing what you want to achieve.
+
 Contributions are welcome! Please:
+
 1. Read the [CLAUDE.md](CLAUDE.md) file for code style guidelines
 2. Ensure all tests pass
 3. Format code with `dotnet csharpier .`
